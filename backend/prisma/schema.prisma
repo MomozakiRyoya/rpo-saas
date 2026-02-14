@@ -1,0 +1,340 @@
+// This is your Prisma schema file for RPO-SaaS MVP
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== テナント・ユーザー ====================
+
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users     User[]
+  customers Customer[]
+  auditLogs AuditLog[]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String   // ハッシュ化済み
+  role      Role     @default(MEMBER)
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  auditLogs      AuditLog[]
+  approvalReviews ApprovalReview[]
+
+  @@index([tenantId])
+}
+
+enum Role {
+  ADMIN       // 全権限
+  MANAGER     // 承認権限あり
+  MEMBER      // 操作のみ
+}
+
+// ==================== 顧客企業 ====================
+
+model Customer {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  jobs Job[]
+
+  @@index([tenantId])
+}
+
+// ==================== 求人 ====================
+
+model Job {
+  id          String      @id @default(uuid())
+  title       String
+  status      JobStatus   @default(DRAFT)
+  customerId  String
+  customer    Customer    @relation(fields: [customerId], references: [id])
+
+  // 求人基本情報（入力フォームから）
+  description String?
+  location    String?
+  salary      String?
+  employmentType String?
+  requirements   String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  textVersions  JobTextVersion[]
+  imageVersions JobImageVersion[]
+  approvals     Approval[]
+  publications  Publication[]
+  inquiries     Inquiry[]
+
+  @@index([customerId])
+  @@index([status])
+}
+
+enum JobStatus {
+  DRAFT              // 下書き
+  GENERATED          // 生成完了
+  PENDING_APPROVAL   // 承認待ち
+  APPROVED           // 承認済み
+  PUBLISHING         // 掲載実行中
+  PUBLISHED          // 掲載中
+  PUBLISH_FAILED     // 更新失敗
+  STOPPED            // 掲載停止
+}
+
+// ==================== 求人テキスト生成 ====================
+
+model JobTextVersion {
+  id        String   @id @default(uuid())
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id])
+  version   Int
+  content   String   @db.Text
+  generatedBy String  // "manual" or "ai"
+  createdAt DateTime @default(now())
+
+  @@unique([jobId, version])
+  @@index([jobId])
+}
+
+// ==================== 画像生成 ====================
+
+model JobImageVersion {
+  id        String   @id @default(uuid())
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id])
+  version   Int
+  imageUrl  String
+  prompt    String?  @db.Text
+  generatedBy String  // "manual" or "ai"
+  createdAt DateTime @default(now())
+
+  @@unique([jobId, version])
+  @@index([jobId])
+}
+
+// ==================== 承認フロー ====================
+
+model Approval {
+  id        String         @id @default(uuid())
+  jobId     String
+  job       Job            @relation(fields: [jobId], references: [id])
+  status    ApprovalStatus @default(PENDING)
+  textVersion  Int?
+  imageVersion Int?
+  requestedAt  DateTime   @default(now())
+  completedAt  DateTime?
+
+  reviews   ApprovalReview[]
+
+  @@index([jobId])
+  @@index([status])
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ApprovalReview {
+  id         String   @id @default(uuid())
+  approvalId String
+  approval   Approval @relation(fields: [approvalId], references: [id])
+  reviewerId String
+  reviewer   User     @relation(fields: [reviewerId], references: [id])
+  action     String   // "approve" or "reject"
+  comment    String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  @@index([approvalId])
+}
+
+// ==================== 媒体連携 ====================
+
+model Connector {
+  id          String   @id @default(uuid())
+  name        String   // "ダミー媒体", "Indeed", "求人ボックス" etc.
+  type        String   // "dummy", "indeed", "kyujin-box"
+  config      Json     // 各コネクタ固有の設定
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  publications Publication[]
+}
+
+model Publication {
+  id          String            @id @default(uuid())
+  jobId       String
+  job         Job               @relation(fields: [jobId], references: [id])
+  connectorId String
+  connector   Connector         @relation(fields: [connectorId], references: [id])
+  status      PublicationStatus @default(PENDING)
+  externalId  String?           // 媒体側のID
+  publishedAt DateTime?
+  stoppedAt   DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  logs PublicationLog[]
+
+  @@index([jobId])
+  @@index([connectorId])
+  @@index([status])
+}
+
+enum PublicationStatus {
+  PENDING
+  PUBLISHING
+  PUBLISHED
+  FAILED
+  STOPPED
+}
+
+model PublicationLog {
+  id            String      @id @default(uuid())
+  publicationId String
+  publication   Publication @relation(fields: [publicationId], references: [id])
+  action        String      // "create", "update", "stop"
+  status        String      // "success", "failed"
+  request       Json?
+  response      Json?
+  errorMessage  String?     @db.Text
+  createdAt     DateTime    @default(now())
+
+  @@index([publicationId])
+}
+
+// ==================== 問い合わせ ====================
+
+model Inquiry {
+  id          String        @id @default(uuid())
+  jobId       String?
+  job         Job?          @relation(fields: [jobId], references: [id])
+  category    String?       // 自動分類結果
+  content     String        @db.Text
+  applicantName  String?
+  applicantEmail String?
+  status      InquiryStatus @default(RECEIVED)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  responses InquiryResponse[]
+
+  @@index([jobId])
+  @@index([status])
+}
+
+enum InquiryStatus {
+  RECEIVED
+  CLASSIFIED
+  DRAFT_READY
+  SENT
+}
+
+model InquiryResponse {
+  id         String   @id @default(uuid())
+  inquiryId  String
+  inquiry    Inquiry  @relation(fields: [inquiryId], references: [id])
+  content    String   @db.Text
+  generatedBy String  // "template" or "ai"
+  isSent     Boolean  @default(false)
+  sentAt     DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([inquiryId])
+}
+
+// ==================== 日程調整 ====================
+
+model Schedule {
+  id             String         @id @default(uuid())
+  inquiryId      String?
+  candidateName  String
+  candidateEmail String
+  status         ScheduleStatus @default(PROPOSED)
+  confirmedSlot  DateTime?
+  externalEventId String?       // Google Calendar等のイベントID
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  slots ScheduleSlot[]
+}
+
+enum ScheduleStatus {
+  PROPOSED
+  CONFIRMED
+  CANCELLED
+}
+
+model ScheduleSlot {
+  id         String    @id @default(uuid())
+  scheduleId String
+  schedule   Schedule  @relation(fields: [scheduleId], references: [id])
+  slotTime   DateTime
+  isSelected Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  @@index([scheduleId])
+}
+
+// ==================== 分析 ====================
+
+model DailyMetric {
+  id            String   @id @default(uuid())
+  date          DateTime @db.Date
+  jobId         String?
+  connectorId   String?
+  impressions   Int      @default(0)
+  clicks        Int      @default(0)
+  applications  Int      @default(0)
+  clickRate     Float?
+  applicationRate Float?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([date, jobId, connectorId])
+  @@index([date])
+  @@index([jobId])
+  @@index([connectorId])
+}
+
+// ==================== 監査ログ ====================
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String   // "create_job", "approve_job", "publish_job" etc.
+  resource  String   // "job", "approval", "publication" etc.
+  resourceId String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([createdAt])
+}
