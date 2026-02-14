@@ -149,8 +149,8 @@ async function main() {
         impressions: Math.floor(Math.random() * 1000) + 500,
         clicks: Math.floor(Math.random() * 50) + 20,
         applications: Math.floor(Math.random() * 10) + 1,
-        clickRate: (Math.random() * 5 + 2).toFixed(2) as any,
-        applicationRate: (Math.random() * 2 + 0.5).toFixed(2) as any,
+        clickRate: parseFloat((Math.random() * 5 + 2).toFixed(2)),
+        applicationRate: parseFloat((Math.random() * 2 + 0.5).toFixed(2)),
       },
     });
   }

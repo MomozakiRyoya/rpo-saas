@@ -3,17 +3,17 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from '../src/app.module';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import express from 'express';
+import express, { Request, Response } from 'express';
 
-const server = express();
+let cachedApp: express.Application;
 
-export default async (req: any, res: any) => {
-  // キャッシュされたインスタンスを使用
-  if (!(global as any).app) {
+async function bootstrap() {
+  if (!cachedApp) {
     const expressApp = express();
     const app = await NestFactory.create(
       AppModule,
       new ExpressAdapter(expressApp),
+      { logger: ['error', 'warn'] }
     );
 
     // CORS設定
@@ -42,8 +42,18 @@ export default async (req: any, res: any) => {
     SwaggerModule.setup('api/docs', app, document);
 
     await app.init();
-    (global as any).app = expressApp;
+    cachedApp = expressApp;
   }
 
-  return (global as any).app(req, res);
+  return cachedApp;
+}
+
+export default async (req: Request, res: Response) => {
+  try {
+    const app = await bootstrap();
+    app(req, res);
+  } catch (error) {
+    console.error('Serverless function error:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
 };
