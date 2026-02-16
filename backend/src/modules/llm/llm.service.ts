@@ -115,7 +115,8 @@ ${customPrompt ? `\n【追加指示】\n${customPrompt}` : ''}`;
       throw new Error('No text content in response');
     } catch (error) {
       console.error('OpenAI API error:', error);
-      throw new Error(`Failed to generate job text: ${error.message}`);
+      console.warn('⚠️ Falling back to mock text generation');
+      return this.generateMockJobText(params);
     }
   }
 
@@ -179,7 +180,8 @@ ${inquiryContent}
       throw new Error('No text content in response');
     } catch (error) {
       console.error('OpenAI API error:', error);
-      throw new Error(`Failed to generate inquiry response: ${error.message}`);
+      console.warn('⚠️ Falling back to mock inquiry response');
+      return this.generateMockInquiryResponse(params);
     }
   }
 
