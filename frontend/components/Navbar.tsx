@@ -66,6 +66,9 @@ export default function Navbar() {
               <a href="/dashboard/connectors" className={getLinkClass('/dashboard/connectors')}>
                 コネクタ設定
               </a>
+              <a href="/dashboard/settings" className={getLinkClass('/dashboard/settings')}>
+                システム設定
+              </a>
             </div>
           </div>
           <div className="flex items-center">

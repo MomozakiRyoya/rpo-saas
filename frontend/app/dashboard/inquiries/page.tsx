@@ -19,6 +19,72 @@ interface Inquiry {
   responses?: any[];
 }
 
+// サンプルデータ
+const sampleInquiries: Inquiry[] = [
+  {
+    id: 'sample-1',
+    applicantName: '田中 太郎',
+    applicantEmail: 'tanaka@example.com',
+    content: 'フルスタックエンジニアの求人について、在宅勤務の可否を教えていただけますでしょうか。また、使用する技術スタックの詳細についても知りたいです。',
+    category: '求人内容',
+    status: 'RECEIVED',
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    job: { id: 'job-1', title: 'フルスタックエンジニア' },
+    responses: [],
+  },
+  {
+    id: 'sample-2',
+    applicantName: '佐藤 花子',
+    applicantEmail: 'sato.hanako@example.com',
+    content: '面接の日程について、来週の火曜日または水曜日での調整は可能でしょうか？現在の勤務先との兼ね合いで、平日午後の時間帯を希望しております。',
+    category: '面接日程',
+    status: 'DRAFT_READY',
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+    job: { id: 'job-2', title: 'Reactエンジニア' },
+    responses: [],
+  },
+  {
+    id: 'sample-3',
+    applicantName: '鈴木 一郎',
+    applicantEmail: 'suzuki.ichiro@example.com',
+    content: '給与体系について詳しく教えていただきたいです。基本給の他に、どのような手当が含まれているのでしょうか。また、賞与の支給実績についても知りたいです。',
+    category: '給与・待遇',
+    status: 'RECEIVED',
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    job: { id: 'job-3', title: 'バックエンドエンジニア' },
+    responses: [],
+  },
+  {
+    id: 'sample-4',
+    applicantName: '高橋 美咲',
+    applicantEmail: 'takahashi.misaki@example.com',
+    content: '育児中のため、時短勤務やフレックスタイム制度の利用は可能でしょうか。また、子供の急な病気などに対応できる体制について教えてください。',
+    category: '勤務条件',
+    status: 'SENT',
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    job: { id: 'job-1', title: 'フルスタックエンジニア' },
+    responses: [
+      {
+        id: 'res-1',
+        content: '高橋様\n\nお問い合わせありがとうございます。\n\n弊社では、育児中の社員を積分支援しており、時短勤務やフレックスタイム制度の利用が可能です。また、お子様の急な病気等にも柔軟に対応できる体制を整えております。\n\n詳細については、面接時に人事担当よりご説明させていただきます。\n\nよろしくお願いいたします。',
+        isSent: true,
+        sentAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  },
+  {
+    id: 'sample-5',
+    applicantName: '山田 健太',
+    applicantEmail: 'yamada.kenta@example.com',
+    content: '未経験からのキャリアチェンジを考えています。研修制度やOJTの内容、メンター制度の有無について詳しく教えていただけますでしょうか。',
+    category: '研修・育成',
+    status: 'RECEIVED',
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    job: { id: 'job-4', title: 'ジュニアエンジニア' },
+    responses: [],
+  },
+];
+
 export default function InquiriesPage() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,9 +98,12 @@ export default function InquiriesPage() {
   const loadInquiries = async () => {
     try {
       const data = await inquiryService.getAll();
-      setInquiries(data);
+      // データがない場合はサンプルデータを使用
+      setInquiries(data && data.length > 0 ? data : sampleInquiries);
     } catch (err) {
       console.error('Failed to load inquiries:', err);
+      // エラー時はサンプルデータを表示
+      setInquiries(sampleInquiries);
     } finally {
       setLoading(false);
     }
