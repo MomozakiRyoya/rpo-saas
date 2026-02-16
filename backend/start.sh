@@ -30,4 +30,5 @@ echo "Starting Node application..."
 echo "========================================="
 
 # Use exec to replace shell process with node process
-exec node dist/main.js
+# Note: NestJS outputs to dist/src/main.js, not dist/main.js
+exec node dist/src/main.js
