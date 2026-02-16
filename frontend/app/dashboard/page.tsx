@@ -15,7 +15,7 @@ export default function DashboardPage() {
   return (
     <div className="px-4 sm:px-0">
       {/* Hero Welcome Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-3xl shadow-2xl mb-8 p-8 sm:p-12">
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-3xl shadow-2xl mb-8 p-8 sm:p-12">
         <div className="absolute inset-0 bg-black opacity-5"></div>
         <div className="absolute inset-0" style={{
           backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,.1) 0%, transparent 50%)',
@@ -24,11 +24,11 @@ export default function DashboardPage() {
           <h1 className="text-4xl sm:text-5xl font-black text-white mb-3 tracking-tight">
             おかえりなさい、{user?.name}さん 👋
           </h1>
-          <p className="text-xl text-indigo-100 font-medium">
+          <p className="text-xl text-blue-100 font-medium">
             {user?.tenantName}
           </p>
           <div className="mt-6 flex items-center space-x-2">
-            <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
+            <div className="h-2 w-2 bg-cyan-400 rounded-full animate-pulse"></div>
             <span className="text-sm text-white/90 font-medium">システム稼働中</span>
           </div>
         </div>
@@ -39,7 +39,7 @@ export default function DashboardPage() {
         {/* 顧客企業カード */}
         <a
           href="/dashboard/customers"
-          className="group relative bg-gradient-to-br from-blue-500 to-cyan-500 overflow-hidden shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
+          className="group relative bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 group-hover:from-white/10 group-hover:to-white/20 transition-all duration-300"></div>
           <div className="relative p-6">
@@ -64,7 +64,7 @@ export default function DashboardPage() {
         {/* 求人カード */}
         <a
           href="/dashboard/jobs"
-          className="group relative bg-gradient-to-br from-purple-500 to-pink-500 overflow-hidden shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
+          className="group relative bg-gradient-to-br from-sky-500 to-blue-600 overflow-hidden shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 group-hover:from-white/10 group-hover:to-white/20 transition-all duration-300"></div>
           <div className="relative p-6">
@@ -89,7 +89,7 @@ export default function DashboardPage() {
         {/* 承認待ちカード */}
         <a
           href="/dashboard/approvals"
-          className="group relative bg-gradient-to-br from-amber-500 to-orange-500 overflow-hidden shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
+          className="group relative bg-gradient-to-br from-cyan-500 to-blue-600 overflow-hidden shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 group-hover:from-white/10 group-hover:to-white/20 transition-all duration-300"></div>
           <div className="relative p-6">
@@ -128,10 +128,10 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <a
               href="/dashboard/customers/new"
-              className="group relative bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6 hover:border-indigo-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              className="group relative bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             >
               <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-3 rounded-lg group-hover:scale-110 transition-transform shadow-lg">
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-lg group-hover:scale-110 transition-transform shadow-lg">
                   <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                   </svg>
@@ -145,10 +145,10 @@ export default function DashboardPage() {
 
             <a
               href="/dashboard/jobs/new"
-              className="group relative bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6 hover:border-purple-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              className="group relative bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6 hover:border-sky-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             >
               <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-3 rounded-lg group-hover:scale-110 transition-transform shadow-lg">
+                <div className="bg-gradient-to-br from-sky-500 to-blue-600 p-3 rounded-lg group-hover:scale-110 transition-transform shadow-lg">
                   <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
@@ -162,10 +162,10 @@ export default function DashboardPage() {
 
             <a
               href="/dashboard/analytics"
-              className="group relative bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6 hover:border-green-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              className="group relative bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6 hover:border-cyan-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             >
               <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-br from-green-500 to-green-600 p-3 rounded-lg group-hover:scale-110 transition-transform shadow-lg">
+                <div className="bg-gradient-to-br from-cyan-500 to-blue-600 p-3 rounded-lg group-hover:scale-110 transition-transform shadow-lg">
                   <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
@@ -179,10 +179,10 @@ export default function DashboardPage() {
 
             <a
               href="/dashboard/connectors"
-              className="group relative bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6 hover:border-cyan-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              className="group relative bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             >
               <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 p-3 rounded-lg group-hover:scale-110 transition-transform shadow-lg">
+                <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-3 rounded-lg group-hover:scale-110 transition-transform shadow-lg">
                   <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
@@ -201,7 +201,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 最近のアクティビティ */}
         <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+          <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
             <h3 className="text-lg font-bold text-white flex items-center">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -228,7 +228,7 @@ export default function DashboardPage() {
 
         {/* システム情報 */}
         <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
-          <div className="bg-gradient-to-r from-green-500 to-teal-600 px-6 py-4">
+          <div className="bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-4">
             <h3 className="text-lg font-bold text-white flex items-center">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -238,10 +238,10 @@ export default function DashboardPage() {
           </div>
           <div className="p-6">
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg">
                 <span className="text-sm font-medium text-gray-700">API接続</span>
-                <span className="flex items-center text-sm font-semibold text-green-600">
-                  <span className="h-2 w-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                <span className="flex items-center text-sm font-semibold text-cyan-600">
+                  <span className="h-2 w-2 bg-cyan-500 rounded-full mr-2 animate-pulse"></span>
                   正常
                 </span>
               </div>
@@ -252,10 +252,10 @@ export default function DashboardPage() {
                   接続中
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-sky-50 rounded-lg">
                 <span className="text-sm font-medium text-gray-700">バックグラウンドジョブ</span>
-                <span className="flex items-center text-sm font-semibold text-purple-600">
-                  <span className="h-2 w-2 bg-purple-500 rounded-full mr-2 animate-pulse"></span>
+                <span className="flex items-center text-sm font-semibold text-sky-600">
+                  <span className="h-2 w-2 bg-sky-500 rounded-full mr-2 animate-pulse"></span>
                   実行中
                 </span>
               </div>

@@ -93,8 +93,8 @@ const statusStyles: Record<string, { gradient: string; text: string; icon: strin
     label: '受信済み',
   },
   DRAFT_READY: {
-    gradient: 'from-purple-100 to-pink-100',
-    text: 'text-purple-700',
+    gradient: 'from-sky-100 to-blue-100',
+    text: 'text-sky-700',
     icon: '✍️',
     label: '返信案あり',
   },
@@ -160,7 +160,7 @@ export default function InquiriesPage() {
     return (
       <div className="px-4 sm:px-0 flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
           <p className="mt-4 text-gray-600 font-medium">読み込み中...</p>
         </div>
       </div>
@@ -171,7 +171,7 @@ export default function InquiriesPage() {
     <div className="px-4 sm:px-0">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
           問い合わせ一覧
         </h1>
         <p className="text-gray-600 flex items-center space-x-2">
@@ -186,7 +186,7 @@ export default function InquiriesPage() {
         {/* Inquiries List */}
         <div className="lg:col-span-2">
           <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-100">
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-4">
+            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-white flex items-center">
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,9 +215,9 @@ export default function InquiriesPage() {
                   return (
                     <li
                       key={inquiry.id}
-                      className={`px-6 py-4 cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 ${
+                      className={`px-6 py-4 cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 ${
                         selectedInquiry?.id === inquiry.id
-                          ? 'bg-gradient-to-r from-purple-50 to-pink-50 border-l-4 border-purple-500'
+                          ? 'bg-gradient-to-r from-cyan-50 to-blue-50 border-l-4 border-cyan-500'
                           : ''
                       }`}
                       onClick={() => setSelectedInquiry(inquiry)}
@@ -228,8 +228,8 @@ export default function InquiriesPage() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-3 mb-2">
-                            <div className="bg-gradient-to-br from-purple-100 to-pink-100 p-2 rounded-lg">
-                              <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="bg-gradient-to-br from-cyan-100 to-blue-100 p-2 rounded-lg">
+                              <svg className="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                               </svg>
                             </div>
@@ -277,15 +277,15 @@ export default function InquiriesPage() {
                 </h3>
               </div>
               <div className="p-6 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl">
-                  <label className="block text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">
+                <div className="bg-gradient-to-br from-cyan-50 to-blue-50 p-4 rounded-xl">
+                  <label className="block text-xs font-bold text-cyan-600 uppercase tracking-wider mb-1">
                     応募者名
                   </label>
                   <p className="text-sm font-black text-slate-900">
                     {selectedInquiry.applicantName || '-'}
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 rounded-xl">
+                <div className="bg-gradient-to-br from-blue-50 to-sky-50 p-4 rounded-xl">
                   <label className="block text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
                     メールアドレス
                   </label>
@@ -336,7 +336,7 @@ export default function InquiriesPage() {
                 <button
                   onClick={handleGenerateResponse}
                   disabled={generating}
-                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   {generating ? (
                     <>

@@ -25,10 +25,10 @@ const connectorTypeIcons: Record<string, string> = {
 
 const connectorTypeColors: Record<string, { gradient: string; text: string }> = {
   indeed: { gradient: 'from-blue-500 to-cyan-500', text: 'text-blue-600' },
-  'kyujin-box': { gradient: 'from-orange-500 to-amber-500', text: 'text-orange-600' },
-  rikunabi: { gradient: 'from-indigo-500 to-purple-500', text: 'text-indigo-600' },
-  mynavi: { gradient: 'from-sky-500 to-blue-500', text: 'text-sky-600' },
-  doda: { gradient: 'from-rose-500 to-pink-500', text: 'text-rose-600' },
+  'kyujin-box': { gradient: 'from-sky-500 to-blue-500', text: 'text-sky-600' },
+  rikunabi: { gradient: 'from-blue-600 to-cyan-600', text: 'text-blue-700' },
+  mynavi: { gradient: 'from-cyan-500 to-blue-600', text: 'text-cyan-600' },
+  doda: { gradient: 'from-sky-600 to-blue-700', text: 'text-sky-700' },
   dummy: { gradient: 'from-slate-500 to-gray-500', text: 'text-slate-600' },
 };
 
@@ -101,7 +101,7 @@ export default function ConnectorsPage() {
     return (
       <div className="px-4 sm:px-0 flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-cyan-500 border-t-transparent"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
           <p className="mt-4 text-gray-600 font-medium">読み込み中...</p>
         </div>
       </div>
@@ -114,7 +114,7 @@ export default function ConnectorsPage() {
       <div className="mb-8">
         <div className="sm:flex sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-blue-600 to-sky-600 bg-clip-text text-transparent">
               コネクタ設定
             </h1>
             <p className="text-gray-600 flex items-center space-x-2">
@@ -127,7 +127,7 @@ export default function ConnectorsPage() {
           <div className="mt-4 sm:mt-0">
             <a
               href="/dashboard/connectors/new"
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-sky-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -161,7 +161,7 @@ export default function ConnectorsPage() {
           <p className="text-slate-500 mb-6">求人媒体と連携を開始しましょう</p>
           <a
             href="/dashboard/connectors/new"
-            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-sky-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -176,7 +176,7 @@ export default function ConnectorsPage() {
             return (
               <div
                 key={connector.id}
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-cyan-200 transform hover:-translate-y-1"
+                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-blue-200 transform hover:-translate-y-1"
                 style={{
                   animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`
                 }}
@@ -275,7 +275,7 @@ export default function ConnectorsPage() {
                       </a>
                       <button
                         onClick={() => handleToggleActive(connector.id, connector.isActive)}
-                        className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 font-semibold rounded-lg hover:from-amber-100 hover:to-orange-100 transition-all"
+                        className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-sky-50 to-blue-50 text-sky-700 font-semibold rounded-lg hover:from-sky-100 hover:to-blue-100 transition-all"
                       >
                         {connector.isActive ? '無効化' : '有効化'}
                       </button>

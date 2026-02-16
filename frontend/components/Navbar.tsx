@@ -25,8 +25,8 @@ export default function Navbar() {
 
   const getLinkClass = (path: string) => {
     return isActive(path)
-      ? 'relative px-3 py-2 text-sm font-bold text-indigo-600 transition-colors after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gradient-to-r after:from-indigo-600 after:to-purple-600 after:rounded-full'
-      : 'px-3 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors';
+      ? 'relative px-3 py-2 text-sm font-bold text-blue-600 transition-colors after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gradient-to-r after:from-blue-600 after:to-cyan-600 after:rounded-full'
+      : 'px-3 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors';
   };
 
   const handleLogout = () => {
@@ -42,14 +42,14 @@ export default function Navbar() {
           <div className="flex items-center">
             <a href="/dashboard" className="flex items-center space-x-3 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition-opacity"></div>
-                <div className="relative bg-gradient-to-r from-indigo-600 to-purple-600 p-2 rounded-lg">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative bg-gradient-to-r from-blue-600 to-cyan-600 p-2 rounded-lg">
                   <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
               </div>
-              <h1 className="text-xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                 RPO-SaaS
               </h1>
             </a>
@@ -95,7 +95,7 @@ export default function Navbar() {
                     <p className="text-sm font-bold text-slate-900">{user.name}</p>
                     <p className="text-xs text-slate-500">{user.role}</p>
                   </div>
-                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
                     {user.name.charAt(0)}
                   </div>
                 </div>
@@ -114,7 +114,7 @@ export default function Navbar() {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition-colors"
+              className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-slate-600 hover:text-blue-600 hover:bg-slate-100 transition-colors"
             >
               <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {mobileMenuOpen ? (
@@ -136,7 +136,7 @@ export default function Navbar() {
               href="/dashboard"
               className={`block px-3 py-2 rounded-lg text-sm font-medium ${
                 isActive('/dashboard')
-                  ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600'
+                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
                   : 'text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -146,7 +146,7 @@ export default function Navbar() {
               href="/dashboard/customers"
               className={`block px-3 py-2 rounded-lg text-sm font-medium ${
                 isActive('/dashboard/customers')
-                  ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600'
+                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
                   : 'text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -156,7 +156,7 @@ export default function Navbar() {
               href="/dashboard/jobs"
               className={`block px-3 py-2 rounded-lg text-sm font-medium ${
                 isActive('/dashboard/jobs')
-                  ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600'
+                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
                   : 'text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -166,7 +166,7 @@ export default function Navbar() {
               href="/dashboard/approvals"
               className={`block px-3 py-2 rounded-lg text-sm font-medium ${
                 isActive('/dashboard/approvals')
-                  ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600'
+                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
                   : 'text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -176,7 +176,7 @@ export default function Navbar() {
               href="/dashboard/inquiries"
               className={`block px-3 py-2 rounded-lg text-sm font-medium ${
                 isActive('/dashboard/inquiries')
-                  ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600'
+                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
                   : 'text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -186,7 +186,7 @@ export default function Navbar() {
               href="/dashboard/schedules"
               className={`block px-3 py-2 rounded-lg text-sm font-medium ${
                 isActive('/dashboard/schedules')
-                  ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600'
+                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
                   : 'text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -196,7 +196,7 @@ export default function Navbar() {
               href="/dashboard/analytics"
               className={`block px-3 py-2 rounded-lg text-sm font-medium ${
                 isActive('/dashboard/analytics')
-                  ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600'
+                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
                   : 'text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -206,7 +206,7 @@ export default function Navbar() {
               href="/dashboard/connectors"
               className={`block px-3 py-2 rounded-lg text-sm font-medium ${
                 isActive('/dashboard/connectors')
-                  ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600'
+                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
                   : 'text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -216,7 +216,7 @@ export default function Navbar() {
               href="/dashboard/settings"
               className={`block px-3 py-2 rounded-lg text-sm font-medium ${
                 isActive('/dashboard/settings')
-                  ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600'
+                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
                   : 'text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -227,7 +227,7 @@ export default function Navbar() {
             {user && (
               <div className="pt-4 border-t border-slate-200 mt-4">
                 <div className="flex items-center space-x-3 px-3 py-2">
-                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
                     {user.name.charAt(0)}
                   </div>
                   <div>

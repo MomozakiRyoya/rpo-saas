@@ -68,7 +68,7 @@ export default function ApprovalsPage() {
     return (
       <div className="px-4 sm:px-0 flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-amber-500 border-t-transparent"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
           <p className="mt-4 text-gray-600 font-medium">読み込み中...</p>
         </div>
       </div>
@@ -79,7 +79,7 @@ export default function ApprovalsPage() {
     <div className="px-4 sm:px-0">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent">
           承認待ち一覧
         </h1>
         <p className="text-gray-600 flex items-center space-x-2">
@@ -94,7 +94,7 @@ export default function ApprovalsPage() {
         {/* Approvals List */}
         <div className="lg:col-span-2">
           <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-100">
-            <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4">
+            <div className="bg-gradient-to-r from-sky-500 to-blue-500 px-6 py-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-white flex items-center">
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,9 +122,9 @@ export default function ApprovalsPage() {
                 approvals.map((approval, index) => (
                   <li
                     key={approval.id}
-                    className={`px-6 py-4 cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 ${
+                    className={`px-6 py-4 cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-50 hover:to-blue-50 ${
                       selectedApproval?.id === approval.id
-                        ? 'bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500'
+                        ? 'bg-gradient-to-r from-sky-50 to-blue-50 border-l-4 border-sky-500'
                         : ''
                     }`}
                     onClick={() => setSelectedApproval(approval)}
@@ -135,8 +135,8 @@ export default function ApprovalsPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-3 mb-2">
-                          <div className="bg-gradient-to-br from-amber-100 to-orange-100 p-2 rounded-lg">
-                            <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="bg-gradient-to-br from-sky-100 to-blue-100 p-2 rounded-lg">
+                            <svg className="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                           </div>
@@ -151,7 +151,7 @@ export default function ApprovalsPage() {
                         </div>
                       </div>
                       <div className="ml-4 flex flex-col items-end space-y-1">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700">
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-cyan-100 to-sky-100 text-cyan-700">
                           <span className="mr-1">⏳</span>
                           承認待ち
                         </span>
@@ -203,7 +203,7 @@ export default function ApprovalsPage() {
                   </label>
                   <textarea
                     rows={4}
-                    className="w-full px-4 py-3 text-sm border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all resize-none"
+                    className="w-full px-4 py-3 text-sm border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="承認または差戻しのコメントを入力..."

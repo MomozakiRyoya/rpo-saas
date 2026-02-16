@@ -27,8 +27,8 @@ const statusStyles: Record<string, { gradient: string; text: string; icon: strin
     icon: '✨',
   },
   PENDING_APPROVAL: {
-    gradient: 'from-amber-100 to-amber-200',
-    text: 'text-amber-700',
+    gradient: 'from-cyan-100 to-sky-200',
+    text: 'text-cyan-700',
     icon: '⏳',
   },
   APPROVED: {
@@ -37,8 +37,8 @@ const statusStyles: Record<string, { gradient: string; text: string; icon: strin
     icon: '✅',
   },
   PUBLISHING: {
-    gradient: 'from-purple-100 to-purple-200',
-    text: 'text-purple-700',
+    gradient: 'from-blue-100 to-cyan-200',
+    text: 'text-blue-700',
     icon: '🚀',
   },
   PUBLISHED: {
@@ -83,7 +83,7 @@ export default function JobsPage() {
     return (
       <div className="px-4 sm:px-0 flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
           <p className="mt-4 text-gray-600 font-medium">読み込み中...</p>
         </div>
       </div>
@@ -96,7 +96,7 @@ export default function JobsPage() {
       <div className="mb-8">
         <div className="sm:flex sm:items-center sm:justify-between mb-6">
           <div>
-            <h1 className="text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
               求人一覧
             </h1>
             <p className="text-gray-600 flex items-center space-x-2">
@@ -109,7 +109,7 @@ export default function JobsPage() {
           <div className="mt-4 sm:mt-0">
             <a
               href="/dashboard/jobs/new"
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -130,7 +130,7 @@ export default function JobsPage() {
           <select
             id="status"
             name="status"
-            className="block px-4 py-2 text-sm font-medium border-2 border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white"
+            className="block px-4 py-2 text-sm font-medium border-2 border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -167,7 +167,7 @@ export default function JobsPage() {
           <p className="text-slate-500 mb-6">最初の求人を作成しましょう</p>
           <a
             href="/dashboard/jobs/new"
-            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -183,13 +183,13 @@ export default function JobsPage() {
               <a
                 key={job.id}
                 href={`/dashboard/jobs/${job.id}`}
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-purple-200 transform hover:-translate-y-1"
+                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-blue-200 transform hover:-translate-y-1"
                 style={{
                   animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`
                 }}
               >
                 {/* Card Header with Status */}
-                <div className="relative p-6 bg-gradient-to-br from-purple-500 to-pink-500 overflow-hidden">
+                <div className="relative p-6 bg-gradient-to-br from-blue-500 to-cyan-500 overflow-hidden">
                   <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity"></div>
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
                   <div className="relative z-10 flex items-start justify-between">
@@ -223,8 +223,8 @@ export default function JobsPage() {
 
                     {/* Updated Date */}
                     <div className="flex items-center text-sm">
-                      <div className="bg-purple-100 p-2 rounded-lg mr-3">
-                        <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="bg-cyan-100 p-2 rounded-lg mr-3">
+                        <svg className="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                       </div>
@@ -239,7 +239,7 @@ export default function JobsPage() {
 
                   {/* View Details Link */}
                   <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                    <span className="text-sm font-bold text-purple-600 group-hover:text-purple-700 flex items-center">
+                    <span className="text-sm font-bold text-blue-600 group-hover:text-blue-700 flex items-center">
                       詳細を見る
                       <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
