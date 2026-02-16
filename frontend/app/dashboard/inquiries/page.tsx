@@ -111,6 +111,7 @@ export default function InquiriesPage() {
   const [loading, setLoading] = useState(true);
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   useEffect(() => {
     loadInquiries();
@@ -158,7 +159,7 @@ export default function InquiriesPage() {
 
   if (loading) {
     return (
-      <div className="px-4 sm:px-0 flex items-center justify-center min-h-[400px]">
+      <div className="px-4 sm:px-6 lg:px-0 flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
           <p className="mt-4 text-gray-600 font-medium">読み込み中...</p>
@@ -168,54 +169,87 @@ export default function InquiriesPage() {
   }
 
   return (
-    <div className="px-4 sm:px-0">
+    <div className="px-4 sm:px-6 lg:px-0">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
           問い合わせ一覧
         </h1>
-        <p className="text-gray-600 flex items-center space-x-2">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-          <span>応募者からの問い合わせに対応します</span>
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+          <p className="text-sm sm:text-base text-gray-600 flex items-center space-x-2">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <span className="truncate">応募者からの問い合わせに対応します</span>
+          </p>
+
+          {/* View Mode Toggle */}
+          <div className="flex items-center justify-end space-x-2">
+            <span className="text-xs sm:text-sm text-gray-600 font-medium mr-2">表示形式:</span>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`inline-flex items-center px-3 sm:px-4 py-2 min-h-[44px] rounded-lg transition-all ${
+                viewMode === 'grid'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg'
+                  : 'bg-white border-2 border-slate-200 text-slate-600 hover:border-blue-300'
+              }`}
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+              <span className="ml-2 hidden sm:inline text-sm font-semibold">グリッド</span>
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`inline-flex items-center px-3 sm:px-4 py-2 min-h-[44px] rounded-lg transition-all ${
+                viewMode === 'list'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg'
+                  : 'bg-white border-2 border-slate-200 text-slate-600 hover:border-blue-300'
+              }`}
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              <span className="ml-2 hidden sm:inline text-sm font-semibold">リスト</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3">
         {/* Inquiries List */}
         <div className="lg:col-span-2">
-          <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-100">
-            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-4">
+          <div className="bg-white shadow-lg sm:shadow-xl rounded-xl sm:rounded-2xl overflow-hidden border border-slate-100">
+            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 px-4 sm:px-6 py-3 sm:py-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-white flex items-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h3 className="text-base sm:text-lg font-bold text-white flex items-center min-w-0">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                   </svg>
-                  問い合わせリスト
+                  <span className="truncate">問い合わせリスト</span>
                 </h3>
-                <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm font-bold">
+                <span className="bg-white/20 backdrop-blur-sm px-2.5 sm:px-3 py-1 rounded-full text-white text-xs sm:text-sm font-bold flex-shrink-0 ml-2">
                   {inquiries.length} 件
                 </span>
               </div>
             </div>
-            <ul role="list" className="divide-y divide-slate-100">
+            <ul role="list" className={viewMode === 'grid' ? "divide-y divide-slate-100" : "space-y-0"}>
               {inquiries.length === 0 ? (
-                <li className="px-6 py-12 text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full mb-4">
-                    <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li className="px-4 sm:px-6 py-8 sm:py-12 text-center">
+                  <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full mb-3 sm:mb-4">
+                    <svg className="w-6 h-6 sm:w-8 sm:h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <p className="text-slate-600 font-medium">問い合わせはありません</p>
+                  <p className="text-sm sm:text-base text-slate-600 font-medium">問い合わせはありません</p>
                 </li>
-              ) : (
+              ) : viewMode === 'grid' ? (
                 inquiries.map((inquiry, index) => {
                   const statusStyle = statusStyles[inquiry.status] || statusStyles.RECEIVED;
                   return (
                     <li
                       key={inquiry.id}
-                      className={`px-6 py-4 cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 ${
+                      className={`px-4 sm:px-6 py-3 sm:py-4 cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 ${
                         selectedInquiry?.id === inquiry.id
                           ? 'bg-gradient-to-r from-cyan-50 to-blue-50 border-l-4 border-cyan-500'
                           : ''
@@ -225,15 +259,15 @@ export default function InquiriesPage() {
                         animation: `fadeInLeft 0.3s ease-out ${index * 0.05}s both`
                       }}
                     >
-                      <div className="flex items-start justify-between">
+                      <div className="flex items-start justify-between min-w-0">
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <div className="bg-gradient-to-br from-cyan-100 to-blue-100 p-2 rounded-lg">
-                              <svg className="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="flex items-center space-x-2 sm:space-x-3 mb-2">
+                            <div className="bg-gradient-to-br from-cyan-100 to-blue-100 p-1.5 sm:p-2 rounded-lg flex-shrink-0">
+                              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                               </svg>
                             </div>
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                               <p className="text-sm font-black text-gray-900 truncate">
                                 {inquiry.applicantName || '名無し'}
                               </p>
@@ -242,18 +276,96 @@ export default function InquiriesPage() {
                               </p>
                             </div>
                           </div>
-                          <p className="text-sm text-gray-600 line-clamp-2 ml-11">
+                          <p className="text-sm text-gray-600 line-clamp-2 ml-0 sm:ml-11">
                             {inquiry.content}
                           </p>
                         </div>
-                        <div className="ml-4 flex flex-col items-end space-y-1">
+                        <div className="ml-3 sm:ml-4 flex flex-col items-end space-y-1 flex-shrink-0">
                           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r ${statusStyle.gradient} ${statusStyle.text}`}>
                             <span className="mr-1">{statusStyle.icon}</span>
-                            {statusStyle.label}
+                            <span className="hidden sm:inline">{statusStyle.label}</span>
                           </span>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-slate-400 whitespace-nowrap">
                             {new Date(inquiry.createdAt).toLocaleDateString('ja-JP')}
                           </p>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })
+              ) : (
+                inquiries.map((inquiry, index) => {
+                  const statusStyle = statusStyles[inquiry.status] || statusStyles.RECEIVED;
+                  return (
+                    <li
+                      key={inquiry.id}
+                      className={`cursor-pointer transition-all duration-200 ${
+                        selectedInquiry?.id === inquiry.id
+                          ? 'bg-gradient-to-r from-cyan-50 to-blue-50'
+                          : 'hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50'
+                      } ${index > 0 ? 'border-t border-slate-100' : ''}`}
+                      onClick={() => setSelectedInquiry(inquiry)}
+                      style={{
+                        animation: `fadeInLeft 0.3s ease-out ${index * 0.05}s both`
+                      }}
+                    >
+                      <div className="flex flex-col sm:flex-row">
+                        {/* List Item Header */}
+                        <div className={`bg-gradient-to-r from-cyan-500 to-blue-500 p-4 sm:p-6 sm:w-48 lg:w-56 flex sm:flex-col items-center sm:items-start justify-between sm:justify-center relative overflow-hidden ${
+                          selectedInquiry?.id === inquiry.id ? 'border-l-4 border-cyan-600' : ''
+                        }`}>
+                          <div className="absolute inset-0 bg-black opacity-0 hover:opacity-5 transition-opacity"></div>
+                          <div className="relative z-10 bg-white/20 backdrop-blur-sm p-2.5 sm:p-3 rounded-lg sm:rounded-xl mb-0 sm:mb-3">
+                            <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                          </div>
+                          <div className={`relative z-10 bg-white/20 backdrop-blur-sm px-2.5 sm:px-3 py-1 rounded-full`}>
+                            <span className="text-white text-xs sm:text-sm font-bold whitespace-nowrap">{statusStyle.icon} {statusStyle.label}</span>
+                          </div>
+                        </div>
+
+                        {/* List Item Body */}
+                        <div className="flex-1 p-4 sm:p-6 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 sm:mb-3">
+                            <h3 className="text-lg sm:text-xl lg:text-2xl font-black text-gray-900 hover:text-cyan-600 transition-colors truncate mb-2 sm:mb-0">
+                              {inquiry.applicantName || '名無し'}
+                            </h3>
+                          </div>
+
+                          <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                            {inquiry.content}
+                          </p>
+
+                          <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-3 sm:pt-4 border-t border-slate-100">
+                            {/* Job */}
+                            <div className="flex items-center text-sm min-w-0">
+                              <div className="bg-cyan-100 p-1.5 sm:p-2 rounded-lg mr-2 flex-shrink-0">
+                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-xs text-slate-500 font-medium">求人</p>
+                                <p className="text-sm font-bold text-slate-900 truncate">{inquiry.job?.title || '求人未指定'}</p>
+                              </div>
+                            </div>
+
+                            {/* Created Date */}
+                            <div className="flex items-center text-sm min-w-0">
+                              <div className="bg-blue-100 p-1.5 sm:p-2 rounded-lg mr-2 flex-shrink-0">
+                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-xs text-slate-500 font-medium">受信日</p>
+                                <p className="text-sm font-bold text-slate-900 truncate">
+                                  {new Date(inquiry.createdAt).toLocaleDateString('ja-JP')}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </li>
@@ -267,25 +379,25 @@ export default function InquiriesPage() {
         {/* Inquiry Detail Panel */}
         {selectedInquiry ? (
           <div className="lg:col-span-1">
-            <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-100 sticky top-6">
-              <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4">
-                <h3 className="text-lg font-bold text-white flex items-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white shadow-lg sm:shadow-xl rounded-xl sm:rounded-2xl overflow-hidden border border-slate-100 sticky top-4 lg:top-6">
+              <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-4 sm:px-6 py-3 sm:py-4">
+                <h3 className="text-base sm:text-lg font-bold text-white flex items-center">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  問い合わせ詳細
+                  <span className="truncate">問い合わせ詳細</span>
                 </h3>
               </div>
-              <div className="p-6 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-                <div className="bg-gradient-to-br from-cyan-50 to-blue-50 p-4 rounded-xl">
+              <div className="p-4 sm:p-5 lg:p-6 space-y-3 sm:space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+                <div className="bg-gradient-to-br from-cyan-50 to-blue-50 p-3 sm:p-4 rounded-lg sm:rounded-xl">
                   <label className="block text-xs font-bold text-cyan-600 uppercase tracking-wider mb-1">
                     応募者名
                   </label>
-                  <p className="text-sm font-black text-slate-900">
+                  <p className="text-sm font-black text-slate-900 break-words">
                     {selectedInquiry.applicantName || '-'}
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-sky-50 p-4 rounded-xl">
+                <div className="bg-gradient-to-br from-blue-50 to-sky-50 p-3 sm:p-4 rounded-lg sm:rounded-xl">
                   <label className="block text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
                     メールアドレス
                   </label>
@@ -293,11 +405,11 @@ export default function InquiriesPage() {
                     {selectedInquiry.applicantEmail || '-'}
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-4 rounded-xl">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-3 sm:p-4 rounded-lg sm:rounded-xl">
                   <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                     問い合わせ内容
                   </label>
-                  <p className="text-sm text-slate-900 whitespace-pre-wrap">
+                  <p className="text-sm text-slate-900 whitespace-pre-wrap break-words">
                     {selectedInquiry.content}
                   </p>
                 </div>
@@ -307,14 +419,14 @@ export default function InquiriesPage() {
                       返信案
                     </label>
                     {selectedInquiry.responses.map((response: any) => (
-                      <div key={response.id} className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200">
-                        <p className="text-sm text-slate-900 whitespace-pre-wrap mb-3">
+                      <div key={response.id} className="p-3 sm:p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg sm:rounded-xl border-2 border-green-200">
+                        <p className="text-sm text-slate-900 whitespace-pre-wrap mb-3 break-words">
                           {response.content}
                         </p>
                         {!response.isSent ? (
                           <button
                             onClick={() => handleSend(response.id)}
-                            className="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+                            className="w-full inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm sm:text-base font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
                           >
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -336,11 +448,11 @@ export default function InquiriesPage() {
                 <button
                   onClick={handleGenerateResponse}
                   disabled={generating}
-                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  className="w-full inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 min-h-[44px] bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm sm:text-base font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   {generating ? (
                     <>
-                      <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                      <svg className="animate-spin h-4 h-4 sm:h-5 sm:w-5 mr-2" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
@@ -348,7 +460,7 @@ export default function InquiriesPage() {
                     </>
                   ) : (
                     <>
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                       返信案生成
@@ -360,9 +472,9 @@ export default function InquiriesPage() {
           </div>
         ) : (
           <div className="lg:col-span-1">
-            <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-dashed border-slate-300 rounded-2xl p-12 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-200 to-slate-300 rounded-full mb-4">
-                <svg className="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-dashed border-slate-300 rounded-xl sm:rounded-2xl p-8 sm:p-12 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-slate-200 to-slate-300 rounded-full mb-3 sm:mb-4">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
