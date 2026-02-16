@@ -12,26 +12,38 @@ export class PublicationProcessor implements OnModuleInit {
   constructor(private prisma: PrismaService) {}
 
   onModuleInit() {
-    this.worker = new Worker(
-      QueueName.PUBLICATION,
-      async (job: Job<PublicationJobData>) => {
-        return this.processPublication(job);
-      },
-      {
-        ...defaultWorkerOptions,
-        connection: getRedisConfig(),
-      },
-    );
+    try {
+      console.log('🔧 Initializing Publication worker...');
+      console.log('Redis config:', getRedisConfig());
 
-    this.worker.on('completed', (job) => {
-      console.log(`✅ Publication job ${job.id} completed`);
-    });
+      this.worker = new Worker(
+        QueueName.PUBLICATION,
+        async (job: Job<PublicationJobData>) => {
+          return this.processPublication(job);
+        },
+        {
+          ...defaultWorkerOptions,
+          connection: getRedisConfig(),
+        },
+      );
 
-    this.worker.on('failed', (job, err) => {
-      console.error(`❌ Publication job ${job?.id} failed:`, err.message);
-    });
+      this.worker.on('completed', (job) => {
+        console.log(`✅ Publication job ${job.id} completed`);
+      });
 
-    console.log('✅ Publication worker started');
+      this.worker.on('failed', (job, err) => {
+        console.error(`❌ Publication job ${job?.id} failed:`, err.message);
+      });
+
+      this.worker.on('error', (err) => {
+        console.error('❌ Publication worker error:', err);
+      });
+
+      console.log('✅ Publication worker started');
+    } catch (error) {
+      console.error('❌ Failed to initialize Publication worker:', error);
+      throw error;
+    }
   }
 
   async onModuleDestroy() {

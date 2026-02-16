@@ -17,26 +17,38 @@ export class ImageGenerationProcessor implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.worker = new Worker(
-      QueueName.IMAGE_GENERATION,
-      async (job: Job<ImageGenerationJobData>) => {
-        return this.processImageGeneration(job);
-      },
-      {
-        ...defaultWorkerOptions,
-        connection: getRedisConfig(),
-      },
-    );
+    try {
+      console.log('🔧 Initializing Image generation worker...');
+      console.log('Redis config:', getRedisConfig());
 
-    this.worker.on('completed', (job) => {
-      console.log(`✅ Image generation job ${job.id} completed`);
-    });
+      this.worker = new Worker(
+        QueueName.IMAGE_GENERATION,
+        async (job: Job<ImageGenerationJobData>) => {
+          return this.processImageGeneration(job);
+        },
+        {
+          ...defaultWorkerOptions,
+          connection: getRedisConfig(),
+        },
+      );
 
-    this.worker.on('failed', (job, err) => {
-      console.error(`❌ Image generation job ${job?.id} failed:`, err.message);
-    });
+      this.worker.on('completed', (job) => {
+        console.log(`✅ Image generation job ${job.id} completed`);
+      });
 
-    console.log('✅ Image generation worker started');
+      this.worker.on('failed', (job, err) => {
+        console.error(`❌ Image generation job ${job?.id} failed:`, err.message);
+      });
+
+      this.worker.on('error', (err) => {
+        console.error('❌ Image generation worker error:', err);
+      });
+
+      console.log('✅ Image generation worker started');
+    } catch (error) {
+      console.error('❌ Failed to initialize Image generation worker:', error);
+      throw error;
+    }
   }
 
   async onModuleDestroy() {

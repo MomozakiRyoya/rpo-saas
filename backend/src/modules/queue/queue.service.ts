@@ -14,25 +14,33 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
   private queues: Map<QueueName, Queue> = new Map();
 
   async onModuleInit() {
-    // 各キューを初期化
-    this.queues.set(
-      QueueName.TEXT_GENERATION,
-      new Queue(QueueName.TEXT_GENERATION, defaultQueueOptions),
-    );
-    this.queues.set(
-      QueueName.IMAGE_GENERATION,
-      new Queue(QueueName.IMAGE_GENERATION, defaultQueueOptions),
-    );
-    this.queues.set(
-      QueueName.PUBLICATION,
-      new Queue(QueueName.PUBLICATION, defaultQueueOptions),
-    );
-    this.queues.set(
-      QueueName.EMAIL,
-      new Queue(QueueName.EMAIL, defaultQueueOptions),
-    );
+    try {
+      console.log('🔧 Initializing BullMQ queues...');
+      console.log('Queue Redis config:', defaultQueueOptions.connection);
 
-    console.log('✅ BullMQ queues initialized');
+      // 各キューを初期化
+      this.queues.set(
+        QueueName.TEXT_GENERATION,
+        new Queue(QueueName.TEXT_GENERATION, defaultQueueOptions),
+      );
+      this.queues.set(
+        QueueName.IMAGE_GENERATION,
+        new Queue(QueueName.IMAGE_GENERATION, defaultQueueOptions),
+      );
+      this.queues.set(
+        QueueName.PUBLICATION,
+        new Queue(QueueName.PUBLICATION, defaultQueueOptions),
+      );
+      this.queues.set(
+        QueueName.EMAIL,
+        new Queue(QueueName.EMAIL, defaultQueueOptions),
+      );
+
+      console.log('✅ BullMQ queues initialized');
+    } catch (error) {
+      console.error('❌ Failed to initialize BullMQ queues:', error);
+      throw error;
+    }
   }
 
   async onModuleDestroy() {
