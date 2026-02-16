@@ -22,6 +22,12 @@ RUN npx prisma generate
 # Build application
 RUN npm run build
 
+# Verify build output
+RUN ls -la /app/dist && \
+    test -f /app/dist/main.js && \
+    echo "✅ Build successful: main.js found" || \
+    (echo "❌ Build failed: main.js not found" && ls -laR /app && exit 1)
+
 # Production stage
 FROM node:22-slim
 
@@ -47,6 +53,14 @@ COPY start.sh ./
 
 # Make start script executable
 RUN chmod +x start.sh
+
+# Verify all required files are present
+RUN echo "📋 Verifying production files..." && \
+    ls -la /app && \
+    ls -la /app/dist && \
+    test -f /app/dist/main.js && \
+    echo "✅ All files verified" || \
+    (echo "❌ Verification failed" && exit 1)
 
 # Expose port
 EXPOSE 3000
