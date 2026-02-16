@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { connectorService } from '@/lib/services';
 import { Connector } from '@/types';
+import toast from 'react-hot-toast';
 
 const connectorTypeLabels: Record<string, string> = {
   indeed: 'Indeed',
@@ -48,12 +49,12 @@ export default function ConnectorsPage() {
     try {
       const result = await connectorService.testConnection(id);
       if (result.success) {
-        alert('接続テスト成功しました');
+        toast.success('接続テスト成功しました');
       } else {
-        alert(`接続テスト失敗: ${result.error || '不明なエラー'}`);
+        toast.error(`接続テスト失敗: ${result.error || '不明なエラー'}`);
       }
     } catch (err: any) {
-      alert(`接続テスト失敗: ${err.response?.data?.message || err.message}`);
+      toast.error(`接続テスト失敗: ${err.response?.data?.message || err.message}`);
     } finally {
       setTestingId(null);
     }
@@ -66,9 +67,10 @@ export default function ConnectorsPage() {
 
     try {
       await connectorService.update(id, { isActive: !currentStatus });
+      toast.success(`コネクタを${currentStatus ? '無効化' : '有効化'}しました`);
       await loadConnectors();
     } catch (err: any) {
-      alert(`更新に失敗しました: ${err.response?.data?.message || err.message}`);
+      toast.error(`更新に失敗しました: ${err.response?.data?.message || err.message}`);
     }
   };
 
@@ -79,9 +81,10 @@ export default function ConnectorsPage() {
 
     try {
       await connectorService.delete(id);
+      toast.success('コネクタを削除しました');
       await loadConnectors();
     } catch (err: any) {
-      alert(`削除に失敗しました: ${err.response?.data?.message || err.message}`);
+      toast.error(`削除に失敗しました: ${err.response?.data?.message || err.message}`);
     }
   };
 

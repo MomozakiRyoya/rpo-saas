@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { jobService, generationService } from '@/lib/services';
 import { Job } from '@/types';
+import toast from 'react-hot-toast';
 
 export default function JobDetailPage() {
   const params = useParams();
@@ -38,10 +39,10 @@ export default function JobDetailPage() {
     setGenerating(true);
     try {
       await generationService.generateText(job.id);
-      alert('テキスト生成が完了しました');
+      toast.success('テキスト生成が完了しました');
       loadJob();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'テキスト生成に失敗しました');
+      toast.error(err.response?.data?.message || 'テキスト生成に失敗しました');
     } finally {
       setGenerating(false);
     }
@@ -52,10 +53,10 @@ export default function JobDetailPage() {
     setGenerating(true);
     try {
       await generationService.generateImage(job.id);
-      alert('画像生成が完了しました');
+      toast.success('画像生成が完了しました');
       loadJob();
     } catch (err: any) {
-      alert(err.response?.data?.message || '画像生成に失敗しました');
+      toast.error(err.response?.data?.message || '画像生成に失敗しました');
     } finally {
       setGenerating(false);
     }
@@ -65,10 +66,10 @@ export default function JobDetailPage() {
     if (!job || !confirm('承認申請を行いますか？')) return;
     try {
       await jobService.submitForApproval(job.id);
-      alert('承認申請が完了しました');
+      toast.success('承認申請が完了しました');
       router.push('/dashboard/approvals');
     } catch (err: any) {
-      alert(err.response?.data?.message || '承認申請に失敗しました');
+      toast.error(err.response?.data?.message || '承認申請に失敗しました');
     }
   };
 

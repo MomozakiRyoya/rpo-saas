@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { inquiryService } from '@/lib/services';
+import toast from 'react-hot-toast';
 
 interface Inquiry {
   id: string;
@@ -44,13 +45,13 @@ export default function InquiriesPage() {
     setGenerating(true);
     try {
       await inquiryService.generateResponse(selectedInquiry.id);
-      alert('返信案を生成しました');
+      toast.success('返信案を生成しました');
       loadInquiries();
       const updated = await inquiryService.getAll();
       const found = updated.find((i: Inquiry) => i.id === selectedInquiry.id);
       if (found) setSelectedInquiry(found);
     } catch (err: any) {
-      alert(err.response?.data?.message || '返信案生成に失敗しました');
+      toast.error(err.response?.data?.message || '返信案生成に失敗しました');
     } finally {
       setGenerating(false);
     }
@@ -60,10 +61,10 @@ export default function InquiriesPage() {
     if (!selectedInquiry || !confirm('返信を送信しますか？')) return;
     try {
       await inquiryService.send(selectedInquiry.id, responseId);
-      alert('返信を送信しました（モック）');
+      toast.success('返信を送信しました（モック）');
       loadInquiries();
     } catch (err: any) {
-      alert(err.response?.data?.message || '送信に失敗しました');
+      toast.error(err.response?.data?.message || '送信に失敗しました');
     }
   };
 

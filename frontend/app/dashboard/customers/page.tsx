@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { customerService } from '@/lib/services';
 import { Customer } from '@/types';
+import toast from 'react-hot-toast';
 
 export default function CustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -31,7 +32,7 @@ export default function CustomersPage() {
       await customerService.delete(id);
       loadCustomers();
     } catch (err: any) {
-      alert(err.response?.data?.message || '削除に失敗しました');
+      toast.error(err.response?.data?.message || '削除に失敗しました');
     }
   };
 

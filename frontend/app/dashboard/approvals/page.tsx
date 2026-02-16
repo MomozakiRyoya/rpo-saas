@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { approvalService } from '@/lib/services';
 import { Approval } from '@/types';
+import toast from 'react-hot-toast';
 
 export default function ApprovalsPage() {
   const router = useRouter();
@@ -33,12 +34,12 @@ export default function ApprovalsPage() {
     setActionLoading(true);
     try {
       await approvalService.approve(selectedApproval.id, comment);
-      alert('承認が完了しました');
+      toast.success('承認が完了しました');
       setSelectedApproval(null);
       setComment('');
       loadApprovals();
     } catch (err: any) {
-      alert(err.response?.data?.message || '承認に失敗しました');
+      toast.error(err.response?.data?.message || '承認に失敗しました');
     } finally {
       setActionLoading(false);
     }
@@ -46,18 +47,18 @@ export default function ApprovalsPage() {
 
   const handleReject = async () => {
     if (!selectedApproval || !comment) {
-      alert('差戻しの理由を入力してください');
+      toast.error('差戻しの理由を入力してください');
       return;
     }
     setActionLoading(true);
     try {
       await approvalService.reject(selectedApproval.id, comment);
-      alert('差戻しが完了しました');
+      toast.success('差戻しが完了しました');
       setSelectedApproval(null);
       setComment('');
       loadApprovals();
     } catch (err: any) {
-      alert(err.response?.data?.message || '差戻しに失敗しました');
+      toast.error(err.response?.data?.message || '差戻しに失敗しました');
     } finally {
       setActionLoading(false);
     }
