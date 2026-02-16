@@ -92,7 +92,7 @@ ${customPrompt ? `\n【追加指示】\n${customPrompt}` : ''}`;
 
     try {
       const response = await this.anthropicClient.messages.create({
-        model: 'claude-3-5-sonnet-20240620',
+        model: 'claude-3-opus-20240229',
         max_tokens: 2000,
         temperature: 0.7,
         system: systemPrompt,
