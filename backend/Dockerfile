@@ -29,14 +29,15 @@ RUN apk add --no-cache bash
 
 # Copy package files
 COPY package*.json ./
-COPY prisma ./prisma/
 
-# Install production dependencies only
-RUN npm ci --omit=dev
+# Copy node_modules from builder (includes all dependencies and generated Prisma client)
+COPY --from=builder /app/node_modules ./node_modules
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
+# Copy prisma schema for migrations
+COPY prisma ./prisma/
 
 # Copy start script
 COPY start.sh ./
