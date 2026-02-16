@@ -8,3 +8,4 @@ Version: BullMQ Queue Integration
 - Redis-backed queue workers
 - Claude API for text generation
 - Gemini API for image generation
+# Trigger redeploy with API keys
