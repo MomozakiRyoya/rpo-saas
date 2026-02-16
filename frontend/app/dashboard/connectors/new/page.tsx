@@ -5,9 +5,42 @@ import { useRouter } from 'next/navigation';
 import { connectorService } from '@/lib/services';
 
 const connectorTypes = [
-  { value: 'indeed', label: 'Indeed' },
-  { value: 'kyujin-box', label: '求人ボックス' },
-  { value: 'dummy', label: 'ダミー（テスト用）' },
+  {
+    value: 'indeed',
+    label: 'Indeed',
+    description: '世界最大級の求人検索エンジン',
+    icon: '🌐'
+  },
+  {
+    value: 'kyujin-box',
+    label: '求人ボックス',
+    description: 'Kakaoが運営する日本の求人検索エンジン',
+    icon: '📦'
+  },
+  {
+    value: 'rikunabi',
+    label: 'リクナビNEXT',
+    description: '転職・求人情報サイト',
+    icon: '🔵'
+  },
+  {
+    value: 'mynavi',
+    label: 'マイナビ転職',
+    description: '総合転職サイト',
+    icon: '🔷'
+  },
+  {
+    value: 'doda',
+    label: 'doda',
+    description: 'パーソルキャリア運営の転職サイト',
+    icon: '🟠'
+  },
+  {
+    value: 'dummy',
+    label: 'ダミー（テスト用）',
+    description: 'テスト・開発用のモックコネクタ',
+    icon: '🔧'
+  },
 ];
 
 export default function NewConnectorPage() {
@@ -21,12 +54,20 @@ export default function NewConnectorPage() {
   });
 
   const [config, setConfig] = useState({
-    // Indeed
+    // 共通
     apiKey: '',
-    publisherId: '',
     apiUrl: '',
+    // Indeed
+    publisherId: '',
     // 求人ボックス
     companyId: '',
+    // リクナビ
+    clientId: '',
+    clientSecret: '',
+    // マイナビ
+    accountId: '',
+    // doda
+    partnerId: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,6 +90,24 @@ export default function NewConnectorPage() {
           apiKey: config.apiKey,
           companyId: config.companyId,
           apiUrl: config.apiUrl || 'https://api.kyujinbox.com/v1',
+        };
+      } else if (formData.type === 'rikunabi') {
+        connectorConfig = {
+          clientId: config.clientId,
+          clientSecret: config.clientSecret,
+          apiUrl: config.apiUrl || 'https://api.rikunabi.com/v1',
+        };
+      } else if (formData.type === 'mynavi') {
+        connectorConfig = {
+          apiKey: config.apiKey,
+          accountId: config.accountId,
+          apiUrl: config.apiUrl || 'https://api.mynavi.jp/v1',
+        };
+      } else if (formData.type === 'doda') {
+        connectorConfig = {
+          apiKey: config.apiKey,
+          partnerId: config.partnerId,
+          apiUrl: config.apiUrl || 'https://api.doda.jp/v1',
         };
       } else if (formData.type === 'dummy') {
         connectorConfig = {};
@@ -170,6 +229,156 @@ export default function NewConnectorPage() {
           </>
         );
 
+      case 'rikunabi':
+        return (
+          <>
+            <div>
+              <label htmlFor="clientId" className="block text-sm font-medium text-gray-700">
+                Client ID <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="clientId"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                value={config.clientId}
+                onChange={(e) => setConfig({ ...config, clientId: e.target.value })}
+              />
+              <p className="mt-1 text-xs text-gray-500">リクナビAPI用のClient ID</p>
+            </div>
+
+            <div>
+              <label htmlFor="clientSecret" className="block text-sm font-medium text-gray-700">
+                Client Secret <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="password"
+                id="clientSecret"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                value={config.clientSecret}
+                onChange={(e) => setConfig({ ...config, clientSecret: e.target.value })}
+              />
+              <p className="mt-1 text-xs text-gray-500">リクナビAPI用のClient Secret</p>
+            </div>
+
+            <div>
+              <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-700">
+                API URL（オプション）
+              </label>
+              <input
+                type="text"
+                id="apiUrl"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                placeholder="https://api.rikunabi.com/v1"
+                value={config.apiUrl}
+                onChange={(e) => setConfig({ ...config, apiUrl: e.target.value })}
+              />
+              <p className="mt-1 text-xs text-gray-500">デフォルト: https://api.rikunabi.com/v1</p>
+            </div>
+          </>
+        );
+
+      case 'mynavi':
+        return (
+          <>
+            <div>
+              <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700">
+                API Key <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="password"
+                id="apiKey"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                value={config.apiKey}
+                onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
+              />
+              <p className="mt-1 text-xs text-gray-500">マイナビAPI認証用のAPIキー</p>
+            </div>
+
+            <div>
+              <label htmlFor="accountId" className="block text-sm font-medium text-gray-700">
+                Account ID <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="accountId"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                value={config.accountId}
+                onChange={(e) => setConfig({ ...config, accountId: e.target.value })}
+              />
+              <p className="mt-1 text-xs text-gray-500">マイナビのAccount ID</p>
+            </div>
+
+            <div>
+              <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-700">
+                API URL（オプション）
+              </label>
+              <input
+                type="text"
+                id="apiUrl"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                placeholder="https://api.mynavi.jp/v1"
+                value={config.apiUrl}
+                onChange={(e) => setConfig({ ...config, apiUrl: e.target.value })}
+              />
+              <p className="mt-1 text-xs text-gray-500">デフォルト: https://api.mynavi.jp/v1</p>
+            </div>
+          </>
+        );
+
+      case 'doda':
+        return (
+          <>
+            <div>
+              <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700">
+                API Key <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="password"
+                id="apiKey"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                value={config.apiKey}
+                onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
+              />
+              <p className="mt-1 text-xs text-gray-500">doda API認証用のAPIキー</p>
+            </div>
+
+            <div>
+              <label htmlFor="partnerId" className="block text-sm font-medium text-gray-700">
+                Partner ID <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="partnerId"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                value={config.partnerId}
+                onChange={(e) => setConfig({ ...config, partnerId: e.target.value })}
+              />
+              <p className="mt-1 text-xs text-gray-500">dodaのPartner ID</p>
+            </div>
+
+            <div>
+              <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-700">
+                API URL（オプション）
+              </label>
+              <input
+                type="text"
+                id="apiUrl"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                placeholder="https://api.doda.jp/v1"
+                value={config.apiUrl}
+                onChange={(e) => setConfig({ ...config, apiUrl: e.target.value })}
+              />
+              <p className="mt-1 text-xs text-gray-500">デフォルト: https://api.doda.jp/v1</p>
+            </div>
+          </>
+        );
+
       case 'dummy':
         return (
           <div className="rounded-md bg-blue-50 p-4">
@@ -228,30 +437,69 @@ export default function NewConnectorPage() {
         </div>
 
         <div>
-          <label htmlFor="type" className="block text-sm font-medium text-gray-700">
-            媒体タイプ <span className="text-red-500">*</span>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            媒体タイプを選択 <span className="text-red-500">*</span>
           </label>
-          <select
-            id="type"
-            required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
-            value={formData.type}
-            onChange={(e) => {
-              setFormData({ ...formData, type: e.target.value });
-              // リセット
-              setConfig({ apiKey: '', publisherId: '', apiUrl: '', companyId: '' });
-            }}
-          >
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {connectorTypes.map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
+              <button
+                key={type.value}
+                type="button"
+                onClick={() => {
+                  setFormData({ ...formData, type: type.value });
+                  // リセット
+                  setConfig({
+                    apiKey: '',
+                    apiUrl: '',
+                    publisherId: '',
+                    companyId: '',
+                    clientId: '',
+                    clientSecret: '',
+                    accountId: '',
+                    partnerId: '',
+                  });
+                }}
+                className={`relative rounded-lg border-2 p-4 flex flex-col items-start hover:border-indigo-500 focus:outline-none transition-all ${
+                  formData.type === type.value
+                    ? 'border-indigo-600 bg-indigo-50'
+                    : 'border-gray-300 bg-white'
+                }`}
+              >
+                <div className="flex items-center space-x-3 w-full">
+                  <span className="text-2xl">{type.icon}</span>
+                  <div className="flex-1 text-left">
+                    <p className={`text-sm font-medium ${
+                      formData.type === type.value ? 'text-indigo-900' : 'text-gray-900'
+                    }`}>
+                      {type.label}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {type.description}
+                    </p>
+                  </div>
+                  {formData.type === type.value && (
+                    <svg className="h-5 w-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+              </button>
             ))}
-          </select>
+          </div>
         </div>
 
         <div className="border-t border-gray-200 pt-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">API認証情報</h3>
+          <div className="flex items-start space-x-3 mb-4">
+            <svg className="h-6 w-6 text-indigo-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <div className="flex-1">
+              <h3 className="text-lg font-medium text-gray-900">API認証情報</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                認証情報は暗号化して安全に保存されます
+              </p>
+            </div>
+          </div>
           <div className="space-y-4">
             {renderConfigFields()}
           </div>

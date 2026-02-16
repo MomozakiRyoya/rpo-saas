@@ -7,7 +7,19 @@ import { Connector } from '@/types';
 const connectorTypeLabels: Record<string, string> = {
   indeed: 'Indeed',
   'kyujin-box': '求人ボックス',
+  rikunabi: 'リクナビNEXT',
+  mynavi: 'マイナビ転職',
+  doda: 'doda',
   dummy: 'ダミー（テスト用）',
+};
+
+const connectorTypeIcons: Record<string, string> = {
+  indeed: '🌐',
+  'kyujin-box': '📦',
+  rikunabi: '🔵',
+  mynavi: '🔷',
+  doda: '🟠',
+  dummy: '🔧',
 };
 
 export default function ConnectorsPage() {
@@ -137,7 +149,10 @@ export default function ConnectorsPage() {
                     connectors.map((connector) => (
                       <tr key={connector.id}>
                         <td className="px-3 py-4 text-sm font-medium text-gray-900">
-                          {connector.name}
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xl">{connectorTypeIcons[connector.type] || '📡'}</span>
+                            <span>{connector.name}</span>
+                          </div>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {connectorTypeLabels[connector.type] || connector.type}

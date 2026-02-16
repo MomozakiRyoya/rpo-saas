@@ -170,6 +170,79 @@ export default function JobDetailPage() {
         </div>
       )}
 
+      {job.publications && job.publications.length > 0 && (
+        <div className="mt-6 bg-white shadow overflow-hidden sm:rounded-lg">
+          <div className="px-4 py-5 sm:px-6 bg-gradient-to-r from-purple-50 to-pink-50">
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                  求人媒体連携状況
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {job.publications.length}件の媒体と連携中
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-gray-200">
+            <ul className="divide-y divide-gray-200">
+              {job.publications.map((pub: any) => (
+                <li key={pub.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <div className={`w-3 h-3 rounded-full ${
+                          pub.status === 'PUBLISHED' ? 'bg-green-400' :
+                          pub.status === 'PUBLISHING' ? 'bg-yellow-400' :
+                          pub.status === 'FAILED' ? 'bg-red-400' :
+                          pub.status === 'STOPPED' ? 'bg-gray-400' :
+                          'bg-blue-400'
+                        }`}></div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {pub.connector?.name || '不明な媒体'}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {pub.status === 'PUBLISHED' ? '掲載中' :
+                           pub.status === 'PUBLISHING' ? '掲載処理中' :
+                           pub.status === 'FAILED' ? '掲載失敗' :
+                           pub.status === 'STOPPED' ? '掲載停止' :
+                           '掲載待機中'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        pub.status === 'PUBLISHED' ? 'bg-green-100 text-green-800' :
+                        pub.status === 'PUBLISHING' ? 'bg-yellow-100 text-yellow-800' :
+                        pub.status === 'FAILED' ? 'bg-red-100 text-red-800' :
+                        pub.status === 'STOPPED' ? 'bg-gray-100 text-gray-800' :
+                        'bg-blue-100 text-blue-800'
+                      }`}>
+                        {pub.status}
+                      </span>
+                      {pub.publishedAt && (
+                        <span className="text-xs text-gray-500 mt-1">
+                          {new Date(pub.publishedAt).toLocaleDateString('ja-JP')}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
       <div className="mt-6 flex flex-col sm:flex-row gap-4">
         <button
           onClick={handleGenerateText}
