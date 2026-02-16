@@ -1,0 +1,13 @@
+[phases.setup]
+nixPkgs = ["nodejs-22_x"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["npx prisma generate", "npm run build"]
+# ビルド時に必要な環境変数のみを指定（APIキーは不要）
+dependsOn = ["install"]
+
+[start]
+cmd = "bash start.sh"
