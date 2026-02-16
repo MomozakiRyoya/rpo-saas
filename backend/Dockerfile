@@ -24,8 +24,8 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-# Install bash for start script
-RUN apk add --no-cache bash
+# Install bash and openssl for Prisma
+RUN apk add --no-cache bash openssl1.1-compat
 
 # Copy package files
 COPY package*.json ./
