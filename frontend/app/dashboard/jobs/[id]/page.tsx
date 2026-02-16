@@ -11,6 +11,7 @@ export default function JobDetailPage() {
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [textVersions, setTextVersions] = useState<any[]>([]);
 
   useEffect(() => {
     if (params.id) {
@@ -22,6 +23,9 @@ export default function JobDetailPage() {
     try {
       const data = await jobService.getOne(params.id as string);
       setJob(data);
+      // テキストバージョンを取得
+      const versions = await jobService.getTextVersions(params.id as string);
+      setTextVersions(versions);
     } catch (err) {
       console.error('Failed to load job:', err);
     } finally {
@@ -129,6 +133,33 @@ export default function JobDetailPage() {
           </dl>
         </div>
       </div>
+
+      {textVersions.length > 0 && (
+        <div className="mt-6 bg-white shadow overflow-hidden sm:rounded-lg">
+          <div className="px-4 py-5 sm:px-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">
+              生成されたテキスト
+            </h3>
+          </div>
+          <div className="border-t border-gray-200">
+            {textVersions.map((version) => (
+              <div key={version.id} className="px-4 py-5 sm:p-6 border-b border-gray-200 last:border-b-0">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-medium text-gray-500">
+                    バージョン {version.version}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {new Date(version.createdAt).toLocaleString('ja-JP')}
+                  </span>
+                </div>
+                <div className="mt-2 text-sm text-gray-900 whitespace-pre-wrap bg-gray-50 p-4 rounded">
+                  {version.content}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-6 flex flex-col sm:flex-row gap-4">
         <button
