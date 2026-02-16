@@ -38,6 +38,7 @@ export interface Job {
   salary?: string;
   employmentType?: string;
   requirements?: string;
+  publications?: Publication[];
   createdAt: string;
   updatedAt: string;
 }
