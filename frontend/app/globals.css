@@ -14,22 +14,41 @@ body {
   min-height: 100vh;
 }
 
+/* 全ての要素の文字色を黒に強制 */
+* {
+  color: #111827 !important;
+}
+
 /* 入力フィールドの文字色を明示的に黒に設定 */
 input,
 textarea,
-select {
-  color: #111827 !important;
+select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* 入力中の文字色 */
+input:focus,
+textarea:focus,
+select:focus {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
 }
 
 /* プレースホルダーの色も設定 */
 input::placeholder,
 textarea::placeholder {
-  color: #9CA3AF !important;
-  opacity: 1;
+  color: #6B7280 !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #6B7280 !important;
 }
 
 /* 選択されたオプションの色 */
 select option {
-  color: #111827 !important;
-  background-color: white;
+  color: #000000 !important;
+  background-color: white !important;
 }
