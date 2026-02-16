@@ -15,38 +15,41 @@ export class TextGenerationProcessor implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    try {
-      console.log('🔧 Initializing Text generation worker...');
-      console.log('Redis config:', getRedisConfig());
+    // Worker初期化を非同期で実行し、失敗してもモジュールロードをブロックしない
+    setImmediate(() => {
+      try {
+        console.log('🔧 Initializing Text generation worker...');
+        console.log('Redis config:', getRedisConfig());
 
-      this.worker = new Worker(
-        QueueName.TEXT_GENERATION,
-        async (job: Job<TextGenerationJobData>) => {
-          return this.processTextGeneration(job);
-        },
-        {
-          ...defaultWorkerOptions,
-          connection: getRedisConfig(),
-        },
-      );
+        this.worker = new Worker(
+          QueueName.TEXT_GENERATION,
+          async (job: Job<TextGenerationJobData>) => {
+            return this.processTextGeneration(job);
+          },
+          {
+            ...defaultWorkerOptions,
+            connection: getRedisConfig(),
+          },
+        );
 
-      this.worker.on('completed', (job) => {
-        console.log(`✅ Text generation job ${job.id} completed`);
-      });
+        this.worker.on('completed', (job) => {
+          console.log(`✅ Text generation job ${job.id} completed`);
+        });
 
-      this.worker.on('failed', (job, err) => {
-        console.error(`❌ Text generation job ${job?.id} failed:`, err.message);
-      });
+        this.worker.on('failed', (job, err) => {
+          console.error(`❌ Text generation job ${job?.id} failed:`, err.message);
+        });
 
-      this.worker.on('error', (err) => {
-        console.error('❌ Text generation worker error:', err);
-      });
+        this.worker.on('error', (err) => {
+          console.error('❌ Text generation worker error:', err);
+        });
 
-      console.log('✅ Text generation worker started');
-    } catch (error) {
-      console.error('❌ Failed to initialize Text generation worker:', error);
-      throw error;
-    }
+        console.log('✅ Text generation worker started');
+      } catch (error) {
+        console.error('❌ Failed to initialize Text generation worker:', error);
+        console.error('Worker will retry on next restart');
+      }
+    });
   }
 
   async onModuleDestroy() {

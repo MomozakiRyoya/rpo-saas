@@ -11,38 +11,40 @@ export class EmailProcessor implements OnModuleInit {
   constructor(private emailService: EmailService) {}
 
   onModuleInit() {
-    try {
-      console.log('🔧 Initializing Email worker...');
-      console.log('Redis config:', getRedisConfig());
+    setImmediate(() => {
+      try {
+        console.log('🔧 Initializing Email worker...');
+        console.log('Redis config:', getRedisConfig());
 
-      this.worker = new Worker(
-        QueueName.EMAIL,
-        async (job: Job<EmailJobData>) => {
-          return this.processEmail(job);
-        },
-        {
-          ...defaultWorkerOptions,
-          connection: getRedisConfig(),
-        },
-      );
+        this.worker = new Worker(
+          QueueName.EMAIL,
+          async (job: Job<EmailJobData>) => {
+            return this.processEmail(job);
+          },
+          {
+            ...defaultWorkerOptions,
+            connection: getRedisConfig(),
+          },
+        );
 
-      this.worker.on('completed', (job) => {
-        console.log(`✅ Email job ${job.id} completed`);
-      });
+        this.worker.on('completed', (job) => {
+          console.log(`✅ Email job ${job.id} completed`);
+        });
 
-      this.worker.on('failed', (job, err) => {
-        console.error(`❌ Email job ${job?.id} failed:`, err.message);
-      });
+        this.worker.on('failed', (job, err) => {
+          console.error(`❌ Email job ${job?.id} failed:`, err.message);
+        });
 
-      this.worker.on('error', (err) => {
-        console.error('❌ Email worker error:', err);
-      });
+        this.worker.on('error', (err) => {
+          console.error('❌ Email worker error:', err);
+        });
 
-      console.log('✅ Email worker started');
-    } catch (error) {
-      console.error('❌ Failed to initialize Email worker:', error);
-      throw error;
-    }
+        console.log('✅ Email worker started');
+      } catch (error) {
+        console.error('❌ Failed to initialize Email worker:', error);
+        console.error('Worker will retry on next restart');
+      }
+    });
   }
 
   async onModuleDestroy() {

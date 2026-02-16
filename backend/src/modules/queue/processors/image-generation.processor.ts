@@ -17,38 +17,40 @@ export class ImageGenerationProcessor implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    try {
-      console.log('🔧 Initializing Image generation worker...');
-      console.log('Redis config:', getRedisConfig());
+    setImmediate(() => {
+      try {
+        console.log('🔧 Initializing Image generation worker...');
+        console.log('Redis config:', getRedisConfig());
 
-      this.worker = new Worker(
-        QueueName.IMAGE_GENERATION,
-        async (job: Job<ImageGenerationJobData>) => {
-          return this.processImageGeneration(job);
-        },
-        {
-          ...defaultWorkerOptions,
-          connection: getRedisConfig(),
-        },
-      );
+        this.worker = new Worker(
+          QueueName.IMAGE_GENERATION,
+          async (job: Job<ImageGenerationJobData>) => {
+            return this.processImageGeneration(job);
+          },
+          {
+            ...defaultWorkerOptions,
+            connection: getRedisConfig(),
+          },
+        );
 
-      this.worker.on('completed', (job) => {
-        console.log(`✅ Image generation job ${job.id} completed`);
-      });
+        this.worker.on('completed', (job) => {
+          console.log(`✅ Image generation job ${job.id} completed`);
+        });
 
-      this.worker.on('failed', (job, err) => {
-        console.error(`❌ Image generation job ${job?.id} failed:`, err.message);
-      });
+        this.worker.on('failed', (job, err) => {
+          console.error(`❌ Image generation job ${job?.id} failed:`, err.message);
+        });
 
-      this.worker.on('error', (err) => {
-        console.error('❌ Image generation worker error:', err);
-      });
+        this.worker.on('error', (err) => {
+          console.error('❌ Image generation worker error:', err);
+        });
 
-      console.log('✅ Image generation worker started');
-    } catch (error) {
-      console.error('❌ Failed to initialize Image generation worker:', error);
-      throw error;
-    }
+        console.log('✅ Image generation worker started');
+      } catch (error) {
+        console.error('❌ Failed to initialize Image generation worker:', error);
+        console.error('Worker will retry on next restart');
+      }
+    });
   }
 
   async onModuleDestroy() {

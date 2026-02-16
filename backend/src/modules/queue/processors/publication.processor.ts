@@ -12,38 +12,40 @@ export class PublicationProcessor implements OnModuleInit {
   constructor(private prisma: PrismaService) {}
 
   onModuleInit() {
-    try {
-      console.log('🔧 Initializing Publication worker...');
-      console.log('Redis config:', getRedisConfig());
+    setImmediate(() => {
+      try {
+        console.log('🔧 Initializing Publication worker...');
+        console.log('Redis config:', getRedisConfig());
 
-      this.worker = new Worker(
-        QueueName.PUBLICATION,
-        async (job: Job<PublicationJobData>) => {
-          return this.processPublication(job);
-        },
-        {
-          ...defaultWorkerOptions,
-          connection: getRedisConfig(),
-        },
-      );
+        this.worker = new Worker(
+          QueueName.PUBLICATION,
+          async (job: Job<PublicationJobData>) => {
+            return this.processPublication(job);
+          },
+          {
+            ...defaultWorkerOptions,
+            connection: getRedisConfig(),
+          },
+        );
 
-      this.worker.on('completed', (job) => {
-        console.log(`✅ Publication job ${job.id} completed`);
-      });
+        this.worker.on('completed', (job) => {
+          console.log(`✅ Publication job ${job.id} completed`);
+        });
 
-      this.worker.on('failed', (job, err) => {
-        console.error(`❌ Publication job ${job?.id} failed:`, err.message);
-      });
+        this.worker.on('failed', (job, err) => {
+          console.error(`❌ Publication job ${job?.id} failed:`, err.message);
+        });
 
-      this.worker.on('error', (err) => {
-        console.error('❌ Publication worker error:', err);
-      });
+        this.worker.on('error', (err) => {
+          console.error('❌ Publication worker error:', err);
+        });
 
-      console.log('✅ Publication worker started');
-    } catch (error) {
-      console.error('❌ Failed to initialize Publication worker:', error);
-      throw error;
-    }
+        console.log('✅ Publication worker started');
+      } catch (error) {
+        console.error('❌ Failed to initialize Publication worker:', error);
+        console.error('Worker will retry on next restart');
+      }
+    });
   }
 
   async onModuleDestroy() {

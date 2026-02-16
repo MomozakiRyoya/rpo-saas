@@ -14,33 +14,35 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
   private queues: Map<QueueName, Queue> = new Map();
 
   async onModuleInit() {
-    try {
-      console.log('🔧 Initializing BullMQ queues...');
-      console.log('Queue Redis config:', defaultQueueOptions.connection);
+    setImmediate(() => {
+      try {
+        console.log('🔧 Initializing BullMQ queues...');
+        console.log('Queue Redis config:', defaultQueueOptions.connection);
 
-      // 各キューを初期化
-      this.queues.set(
-        QueueName.TEXT_GENERATION,
-        new Queue(QueueName.TEXT_GENERATION, defaultQueueOptions),
-      );
-      this.queues.set(
-        QueueName.IMAGE_GENERATION,
-        new Queue(QueueName.IMAGE_GENERATION, defaultQueueOptions),
-      );
-      this.queues.set(
-        QueueName.PUBLICATION,
-        new Queue(QueueName.PUBLICATION, defaultQueueOptions),
-      );
-      this.queues.set(
-        QueueName.EMAIL,
-        new Queue(QueueName.EMAIL, defaultQueueOptions),
-      );
+        // 各キューを初期化
+        this.queues.set(
+          QueueName.TEXT_GENERATION,
+          new Queue(QueueName.TEXT_GENERATION, defaultQueueOptions),
+        );
+        this.queues.set(
+          QueueName.IMAGE_GENERATION,
+          new Queue(QueueName.IMAGE_GENERATION, defaultQueueOptions),
+        );
+        this.queues.set(
+          QueueName.PUBLICATION,
+          new Queue(QueueName.PUBLICATION, defaultQueueOptions),
+        );
+        this.queues.set(
+          QueueName.EMAIL,
+          new Queue(QueueName.EMAIL, defaultQueueOptions),
+        );
 
-      console.log('✅ BullMQ queues initialized');
-    } catch (error) {
-      console.error('❌ Failed to initialize BullMQ queues:', error);
-      throw error;
-    }
+        console.log('✅ BullMQ queues initialized');
+      } catch (error) {
+        console.error('❌ Failed to initialize BullMQ queues:', error);
+        console.error('Queues will retry on next restart');
+      }
+    });
   }
 
   async onModuleDestroy() {
@@ -54,6 +56,9 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
   // テキスト生成ジョブを追加
   async addTextGenerationJob(data: TextGenerationJobData) {
     const queue = this.queues.get(QueueName.TEXT_GENERATION);
+    if (!queue) {
+      throw new Error('Text generation queue is not initialized. Please check Redis connection.');
+    }
     const job = await queue.add('generate-text', data, {
       priority: 1,
     });
@@ -63,6 +68,9 @@ export class QueueService implements OnModuleInit, OnModuleDestroy {
   // 画像生成ジョブを追加
   async addImageGenerationJob(data: ImageGenerationJobData) {
     const queue = this.queues.get(QueueName.IMAGE_GENERATION);
+    if (!queue) {
+      throw new Error('Image generation queue is not initialized. Please check Redis connection.');
+    }
     const job = await queue.add('generate-image', data, {
       priority: 2,
     });
