@@ -15,26 +15,38 @@ export class TextGenerationProcessor implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.worker = new Worker(
-      QueueName.TEXT_GENERATION,
-      async (job: Job<TextGenerationJobData>) => {
-        return this.processTextGeneration(job);
-      },
-      {
-        ...defaultWorkerOptions,
-        connection: getRedisConfig(),
-      },
-    );
+    try {
+      console.log('🔧 Initializing Text generation worker...');
+      console.log('Redis config:', getRedisConfig());
 
-    this.worker.on('completed', (job) => {
-      console.log(`✅ Text generation job ${job.id} completed`);
-    });
+      this.worker = new Worker(
+        QueueName.TEXT_GENERATION,
+        async (job: Job<TextGenerationJobData>) => {
+          return this.processTextGeneration(job);
+        },
+        {
+          ...defaultWorkerOptions,
+          connection: getRedisConfig(),
+        },
+      );
 
-    this.worker.on('failed', (job, err) => {
-      console.error(`❌ Text generation job ${job?.id} failed:`, err.message);
-    });
+      this.worker.on('completed', (job) => {
+        console.log(`✅ Text generation job ${job.id} completed`);
+      });
 
-    console.log('✅ Text generation worker started');
+      this.worker.on('failed', (job, err) => {
+        console.error(`❌ Text generation job ${job?.id} failed:`, err.message);
+      });
+
+      this.worker.on('error', (err) => {
+        console.error('❌ Text generation worker error:', err);
+      });
+
+      console.log('✅ Text generation worker started');
+    } catch (error) {
+      console.error('❌ Failed to initialize Text generation worker:', error);
+      throw error;
+    }
   }
 
   async onModuleDestroy() {
