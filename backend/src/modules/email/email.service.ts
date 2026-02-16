@@ -7,16 +7,25 @@ export class EmailService {
   private fromEmail: string;
 
   constructor() {
-    const apiKey = process.env.RESEND_API_KEY;
+    try {
+      console.log('🔧 Initializing EmailService...');
 
-    if (!apiKey) {
-      console.warn(
-        '⚠️ RESEND_API_KEY is not set. Email features will use mock responses.',
-      );
+      const apiKey = process.env.RESEND_API_KEY;
+
+      if (!apiKey) {
+        console.warn(
+          '⚠️ RESEND_API_KEY is not set. Email features will use mock responses.',
+        );
+      }
+
+      this.resend = new Resend(apiKey || 'dummy-key');
+      this.fromEmail = process.env.EMAIL_FROM || 'noreply@example.com';
+
+      console.log('✅ EmailService initialized');
+    } catch (error) {
+      console.error('❌ Failed to initialize EmailService:', error);
+      throw error;
     }
-
-    this.resend = new Resend(apiKey || 'dummy-key');
-    this.fromEmail = process.env.EMAIL_FROM || 'noreply@example.com';
   }
 
   /**

@@ -8,25 +8,34 @@ export class LlmService {
   private geminiClient: GoogleGenerativeAI;
 
   constructor() {
-    // Anthropic (Claude) の初期化
-    const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
-    if (!anthropicApiKey) {
-      console.warn(
-        '⚠️ ANTHROPIC_API_KEY is not set. Text generation will use mock responses.',
-      );
-    }
-    this.anthropicClient = new Anthropic({
-      apiKey: anthropicApiKey || 'dummy-key',
-    });
+    try {
+      console.log('🔧 Initializing LlmService...');
 
-    // Google Gemini の初期化
-    const geminiApiKey = process.env.GEMINI_API_KEY;
-    if (!geminiApiKey) {
-      console.warn(
-        '⚠️ GEMINI_API_KEY is not set. Image generation will use mock responses.',
-      );
+      // Anthropic (Claude) の初期化
+      const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
+      if (!anthropicApiKey) {
+        console.warn(
+          '⚠️ ANTHROPIC_API_KEY is not set. Text generation will use mock responses.',
+        );
+      }
+      this.anthropicClient = new Anthropic({
+        apiKey: anthropicApiKey || 'dummy-key',
+      });
+
+      // Google Gemini の初期化
+      const geminiApiKey = process.env.GEMINI_API_KEY;
+      if (!geminiApiKey) {
+        console.warn(
+          '⚠️ GEMINI_API_KEY is not set. Image generation will use mock responses.',
+        );
+      }
+      this.geminiClient = new GoogleGenerativeAI(geminiApiKey || 'dummy-key');
+
+      console.log('✅ LlmService initialized');
+    } catch (error) {
+      console.error('❌ Failed to initialize LlmService:', error);
+      throw error;
     }
-    this.geminiClient = new GoogleGenerativeAI(geminiApiKey || 'dummy-key');
   }
 
   /**
