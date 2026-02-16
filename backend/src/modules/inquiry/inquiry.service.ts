@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { LlmService } from '../llm/llm.service';
+import { QueueService } from '../queue/queue.service';
 
 @Injectable()
 export class InquiryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private llmService: LlmService,
+    private queueService: QueueService,
+  ) {}
 
   async findAll(tenantId: string) {
     // テナント配下の求人に紐づく問い合わせを取得
@@ -54,32 +60,26 @@ export class InquiryService {
           customer: { tenantId },
         },
       },
+      include: {
+        job: {
+          select: { title: true },
+        },
+      },
     });
 
     if (!inquiry) throw new Error('Inquiry not found');
 
-    // モック返信案生成
-    const mockResponse = `お問い合わせありがとうございます。
-
-${inquiry.applicantName}様
-
-お問い合わせいただいた内容について、以下の通りご回答いたします。
-
-【お問い合わせ内容】
-${inquiry.content}
-
-【回答】
-※この返信案はモックで生成されています。実際のLLM統合時に適切な返信を生成してください。
-
-何かご不明点がございましたら、お気軽にお問い合わせください。
-
-よろしくお願いいたします。
-`;
+    // Claude APIを使用して返信案生成
+    const generatedResponse = await this.llmService.generateInquiryResponse({
+      applicantName: inquiry.applicantName,
+      inquiryContent: inquiry.content,
+      jobTitle: inquiry.job?.title,
+    });
 
     const response = await this.prisma.inquiryResponse.create({
       data: {
         inquiryId,
-        content: mockResponse,
+        content: generatedResponse,
         generatedBy: 'ai',
       },
     });
@@ -100,10 +100,36 @@ ${inquiry.content}
           customer: { tenantId },
         },
       },
+      include: {
+        job: {
+          select: { title: true },
+        },
+      },
     });
 
     if (!inquiry) throw new Error('Inquiry not found');
 
+    const response = await this.prisma.inquiryResponse.findUnique({
+      where: { id: responseId },
+    });
+
+    if (!response) throw new Error('Response not found');
+
+    // メール送信ジョブをキューに追加
+    await this.queueService.addEmailJob({
+      to: inquiry.applicantEmail || 'applicant@example.com',
+      subject: inquiry.job?.title
+        ? `【${inquiry.job.title}】お問い合わせへの回答`
+        : 'お問い合わせへの回答',
+      body: response.content,
+      template: 'inquiry-response',
+      data: {
+        applicantName: inquiry.applicantName,
+        jobTitle: inquiry.job?.title,
+      },
+    });
+
+    // レスポンスを送信済みに更新
     await this.prisma.inquiryResponse.update({
       where: { id: responseId },
       data: {
@@ -112,11 +138,12 @@ ${inquiry.content}
       },
     });
 
+    // 問い合わせステータスを更新
     await this.prisma.inquiry.update({
       where: { id: inquiryId },
       data: { status: 'SENT' },
     });
 
-    return { message: 'Response sent successfully (mock)' };
+    return { message: 'Response email queued for sending' };
   }
 }

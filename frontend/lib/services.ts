@@ -123,6 +123,46 @@ export const approvalService = {
   },
 };
 
+// コネクタ管理
+export const connectorService = {
+  async getAll() {
+    const response = await api.get('/api/connectors');
+    return response.data;
+  },
+
+  async getOne(id: string) {
+    const response = await api.get(`/api/connectors/${id}`);
+    return response.data;
+  },
+
+  async create(data: {
+    name: string;
+    type: string;
+    config: Record<string, any>;
+  }) {
+    const response = await api.post('/api/connectors', data);
+    return response.data;
+  },
+
+  async update(id: string, data: {
+    name?: string;
+    config?: Record<string, any>;
+    isActive?: boolean;
+  }) {
+    const response = await api.patch(`/api/connectors/${id}`, data);
+    return response.data;
+  },
+
+  async delete(id: string): Promise<void> {
+    await api.delete(`/api/connectors/${id}`);
+  },
+
+  async testConnection(id: string) {
+    const response = await api.post(`/api/connectors/${id}/test`);
+    return response.data;
+  },
+};
+
 // 掲載管理
 export const publicationService = {
   async getConnectors() {

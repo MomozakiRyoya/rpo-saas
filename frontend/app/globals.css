@@ -13,3 +13,10 @@ body {
   background: rgb(var(--background-start-rgb));
   min-height: 100vh;
 }
+
+/* 入力フィールドの文字色を明示的に黒に設定 */
+input,
+textarea,
+select {
+  color: #111827;
+}

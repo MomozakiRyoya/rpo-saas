@@ -85,7 +85,7 @@ export default function NewJobPage() {
                   <select
                     name="customerId"
                     required
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md text-gray-900"
                     value={formData.customerId}
                     onChange={handleChange}
                   >
@@ -106,7 +106,7 @@ export default function NewJobPage() {
                     type="text"
                     name="title"
                     required
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
+                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border text-gray-900"
                     value={formData.title}
                     onChange={handleChange}
                   />
@@ -119,7 +119,7 @@ export default function NewJobPage() {
                   <textarea
                     name="description"
                     rows={4}
-                    className="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md px-3 py-2"
+                    className="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md px-3 py-2 text-gray-900"
                     value={formData.description}
                     onChange={handleChange}
                   />
@@ -133,7 +133,7 @@ export default function NewJobPage() {
                     <input
                       type="text"
                       name="location"
-                      className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
+                      className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border text-gray-900"
                       value={formData.location}
                       onChange={handleChange}
                     />
@@ -146,7 +146,7 @@ export default function NewJobPage() {
                     <input
                       type="text"
                       name="salary"
-                      className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
+                      className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border text-gray-900"
                       value={formData.salary}
                       onChange={handleChange}
                     />
@@ -160,7 +160,7 @@ export default function NewJobPage() {
                   <input
                     type="text"
                     name="employmentType"
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
+                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2 border text-gray-900"
                     value={formData.employmentType}
                     onChange={handleChange}
                     placeholder="例: 正社員"
@@ -174,7 +174,7 @@ export default function NewJobPage() {
                   <textarea
                     name="requirements"
                     rows={3}
-                    className="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md px-3 py-2"
+                    className="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md px-3 py-2 text-gray-900"
                     value={formData.requirements}
                     onChange={handleChange}
                   />

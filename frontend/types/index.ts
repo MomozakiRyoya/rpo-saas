@@ -101,7 +101,10 @@ export interface Connector {
   id: string;
   name: string;
   type: string;
+  config?: Record<string, any>;
   isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Publication {
