@@ -1,25 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 @Injectable()
 export class LlmService {
-  private anthropicClient: Anthropic;
+  private openaiClient: OpenAI;
   private geminiClient: GoogleGenerativeAI;
 
   constructor() {
     try {
       console.log('🔧 Initializing LlmService...');
 
-      // Anthropic (Claude) の初期化
-      const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
-      if (!anthropicApiKey) {
+      // OpenAI の初期化
+      const openaiApiKey = process.env.OPENAI_API_KEY;
+      if (!openaiApiKey) {
         console.warn(
-          '⚠️ ANTHROPIC_API_KEY is not set. Text generation will use mock responses.',
+          '⚠️ OPENAI_API_KEY is not set. Text generation will use mock responses.',
         );
       }
-      this.anthropicClient = new Anthropic({
-        apiKey: anthropicApiKey || 'dummy-key',
+      this.openaiClient = new OpenAI({
+        apiKey: openaiApiKey || 'dummy-key',
       });
 
       // Google Gemini の初期化
@@ -61,7 +61,7 @@ export class LlmService {
     } = params;
 
     // API Keyが設定されていない場合はモック
-    if (!process.env.ANTHROPIC_API_KEY) {
+    if (!process.env.OPENAI_API_KEY) {
       return this.generateMockJobText(params);
     }
 
@@ -91,12 +91,15 @@ ${requirements || '未設定'}
 ${customPrompt ? `\n【追加指示】\n${customPrompt}` : ''}`;
 
     try {
-      const response = await this.anthropicClient.messages.create({
-        model: 'claude-3-opus-20240229',
+      const response = await this.openaiClient.chat.completions.create({
+        model: 'gpt-4o',
         max_tokens: 2000,
         temperature: 0.7,
-        system: systemPrompt,
         messages: [
+          {
+            role: 'system',
+            content: systemPrompt,
+          },
           {
             role: 'user',
             content: userPrompt,
@@ -104,14 +107,14 @@ ${customPrompt ? `\n【追加指示】\n${customPrompt}` : ''}`;
         ],
       });
 
-      const textContent = response.content.find((c) => c.type === 'text');
-      if (textContent && 'text' in textContent) {
-        return textContent.text;
+      const content = response.choices[0]?.message?.content;
+      if (content) {
+        return content;
       }
 
       throw new Error('No text content in response');
     } catch (error) {
-      console.error('Claude API error:', error);
+      console.error('OpenAI API error:', error);
       throw new Error(`Failed to generate job text: ${error.message}`);
     }
   }
@@ -127,7 +130,7 @@ ${customPrompt ? `\n【追加指示】\n${customPrompt}` : ''}`;
     const { applicantName, inquiryContent, jobTitle } = params;
 
     // API Keyが設定されていない場合はモック
-    if (!process.env.ANTHROPIC_API_KEY) {
+    if (!process.env.OPENAI_API_KEY) {
       return this.generateMockInquiryResponse(params);
     }
 
@@ -152,12 +155,15 @@ ${inquiryContent}
 適切な返信メールを作成してください。`;
 
     try {
-      const response = await this.anthropicClient.messages.create({
-        model: 'claude-3-5-sonnet-20241022',
+      const response = await this.openaiClient.chat.completions.create({
+        model: 'gpt-4o',
         max_tokens: 1500,
         temperature: 0.7,
-        system: systemPrompt,
         messages: [
+          {
+            role: 'system',
+            content: systemPrompt,
+          },
           {
             role: 'user',
             content: userPrompt,
@@ -165,14 +171,14 @@ ${inquiryContent}
         ],
       });
 
-      const textContent = response.content.find((c) => c.type === 'text');
-      if (textContent && 'text' in textContent) {
-        return textContent.text;
+      const content = response.choices[0]?.message?.content;
+      if (content) {
+        return content;
       }
 
       throw new Error('No text content in response');
     } catch (error) {
-      console.error('Claude API error:', error);
+      console.error('OpenAI API error:', error);
       throw new Error(`Failed to generate inquiry response: ${error.message}`);
     }
   }
@@ -217,8 +223,8 @@ ${requirements || '特になし'}
 
 ---
 
-※このテキストはモックで生成されています（ANTHROPIC_API_KEYが未設定）。
-※本番環境ではClaude APIを使用して魅力的な求人テキストが生成されます。
+※このテキストはモックで生成されています（OPENAI_API_KEYが未設定）。
+※本番環境ではOpenAI GPT-4oを使用して魅力的な求人テキストが生成されます。
 
 ${customPrompt ? `\nカスタムプロンプト: ${customPrompt}` : ''}`;
   }
@@ -243,8 +249,8 @@ ${inquiryContent}
 
 【回答】
 お問い合わせいただいた内容について、担当者より詳細をご案内させていただきます。
-※このメッセージはモックで生成されています（ANTHROPIC_API_KEYが未設定）。
-※本番環境ではClaude APIを使用して適切な返信が生成されます。
+※このメッセージはモックで生成されています（OPENAI_API_KEYが未設定）。
+※本番環境ではOpenAI GPT-4oを使用して適切な返信が生成されます。
 
 何かご不明点がございましたら、お気軽にお問い合わせください。
 
