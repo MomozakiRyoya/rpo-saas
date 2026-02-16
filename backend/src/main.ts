@@ -5,7 +5,9 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 
-console.log('🚨 DEPLOYMENT CHECK: Code version 2026-02-16-17:15 🚨');
+console.log('='.repeat(80));
+console.log('🚨 DEPLOYMENT CHECK: Code version 2026-02-16-17:20 - LATEST BUILD 🚨');
+console.log('='.repeat(80));
 
 async function bootstrap() {
   try {
