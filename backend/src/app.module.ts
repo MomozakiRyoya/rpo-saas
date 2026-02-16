@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
+import { LlmModule } from './modules/llm/llm.module';
+import { EmailModule } from './modules/email/email.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TenantModule } from './modules/tenant/tenant.module';
 import { CustomerModule } from './modules/customer/customer.module';
@@ -20,6 +22,9 @@ import { QueueModule } from './modules/queue/queue.module';
       isGlobal: true,
     }),
     PrismaModule,
+    // QueueModuleの依存モジュールを先に読み込む
+    LlmModule,
+    EmailModule,
     QueueModule,
     AuthModule,
     TenantModule,
