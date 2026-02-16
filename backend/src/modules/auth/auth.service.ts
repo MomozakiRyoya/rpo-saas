@@ -45,6 +45,7 @@ export class AuthService {
         tenantId: user.tenantId,
         tenantName: user.tenant.name,
       },
+      _codeVersion: '2026-02-16-17:30-BULLMQ-ENABLED',
     };
   }
 
