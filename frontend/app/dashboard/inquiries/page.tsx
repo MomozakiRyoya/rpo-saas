@@ -66,7 +66,7 @@ const sampleInquiries: Inquiry[] = [
     responses: [
       {
         id: 'res-1',
-        content: '高橋様\n\nお問い合わせありがとうございます。\n\n弊社では、育児中の社員を積分支援しており、時短勤務やフレックスタイム制度の利用が可能です。また、お子様の急な病気等にも柔軟に対応できる体制を整えております。\n\n詳細については、面接時に人事担当よりご説明させていただきます。\n\nよろしくお願いいたします。',
+        content: '高橋様\\n\\nお問い合わせありがとうございます。\\n\\n弊社では、育児中の社員を積極的に支援しており、時短勤務やフレックスタイム制度の利用が可能です。また、お子様の急な病気等にも柔軟に対応できる体制を整えております。\\n\\n詳細については、面接時に人事担当よりご説明させていただきます。\\n\\nよろしくお願いいたします。',
         isSent: true,
         sentAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       },
@@ -85,6 +85,27 @@ const sampleInquiries: Inquiry[] = [
   },
 ];
 
+const statusStyles: Record<string, { gradient: string; text: string; icon: string; label: string }> = {
+  RECEIVED: {
+    gradient: 'from-blue-100 to-cyan-100',
+    text: 'text-blue-700',
+    icon: '📬',
+    label: '受信済み',
+  },
+  DRAFT_READY: {
+    gradient: 'from-purple-100 to-pink-100',
+    text: 'text-purple-700',
+    icon: '✍️',
+    label: '返信案あり',
+  },
+  SENT: {
+    gradient: 'from-green-100 to-emerald-100',
+    text: 'text-green-700',
+    icon: '✅',
+    label: '返信済み',
+  },
+};
+
 export default function InquiriesPage() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,11 +119,9 @@ export default function InquiriesPage() {
   const loadInquiries = async () => {
     try {
       const data = await inquiryService.getAll();
-      // データがない場合はサンプルデータを使用
       setInquiries(data && data.length > 0 ? data : sampleInquiries);
     } catch (err) {
       console.error('Failed to load inquiries:', err);
-      // エラー時はサンプルデータを表示
       setInquiries(sampleInquiries);
     } finally {
       setLoading(false);
@@ -130,7 +149,7 @@ export default function InquiriesPage() {
     if (!selectedInquiry || !confirm('返信を送信しますか？')) return;
     try {
       await inquiryService.send(selectedInquiry.id, responseId);
-      toast.success('返信を送信しました（モック）');
+      toast.success('返信を送信しました');
       loadInquiries();
     } catch (err: any) {
       toast.error(err.response?.data?.message || '送信に失敗しました');
@@ -138,125 +157,234 @@ export default function InquiriesPage() {
   };
 
   if (loading) {
-    return <div className="px-4 sm:px-0">読み込み中...</div>;
+    return (
+      <div className="px-4 sm:px-0 flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"></div>
+          <p className="mt-4 text-gray-600 font-medium">読み込み中...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="px-4 sm:px-0">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">問い合わせ一覧</h1>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          問い合わせ一覧
+        </h1>
+        <p className="text-gray-600 flex items-center space-x-2">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          <span>応募者からの問い合わせに対応します</span>
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Inquiries List */}
         <div className="lg:col-span-2">
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul role="list" className="divide-y divide-gray-200">
+          <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-100">
+            <div className="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-white flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
+                  問い合わせリスト
+                </h3>
+                <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm font-bold">
+                  {inquiries.length} 件
+                </span>
+              </div>
+            </div>
+            <ul role="list" className="divide-y divide-slate-100">
               {inquiries.length === 0 ? (
-                <li className="px-4 py-4 sm:px-6 text-sm text-gray-500">
-                  問い合わせはありません
+                <li className="px-6 py-12 text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full mb-4">
+                    <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <p className="text-slate-600 font-medium">問い合わせはありません</p>
                 </li>
               ) : (
-                inquiries.map((inquiry) => (
-                  <li
-                    key={inquiry.id}
-                    className={`px-4 py-4 sm:px-6 cursor-pointer hover:bg-gray-50 ${
-                      selectedInquiry?.id === inquiry.id ? 'bg-indigo-50' : ''
-                    }`}
-                    onClick={() => setSelectedInquiry(inquiry)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-indigo-600 truncate">
-                          {inquiry.applicantName || '名無し'}
-                        </p>
-                        <p className="text-sm text-gray-500 truncate">
-                          {inquiry.content.substring(0, 50)}...
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          {inquiry.job?.title || '求人未指定'}
-                        </p>
+                inquiries.map((inquiry, index) => {
+                  const statusStyle = statusStyles[inquiry.status] || statusStyles.RECEIVED;
+                  return (
+                    <li
+                      key={inquiry.id}
+                      className={`px-6 py-4 cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 ${
+                        selectedInquiry?.id === inquiry.id
+                          ? 'bg-gradient-to-r from-purple-50 to-pink-50 border-l-4 border-purple-500'
+                          : ''
+                      }`}
+                      onClick={() => setSelectedInquiry(inquiry)}
+                      style={{
+                        animation: `fadeInLeft 0.3s ease-out ${index * 0.05}s both`
+                      }}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <div className="bg-gradient-to-br from-purple-100 to-pink-100 p-2 rounded-lg">
+                              <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-black text-gray-900 truncate">
+                                {inquiry.applicantName || '名無し'}
+                              </p>
+                              <p className="text-xs text-slate-500 font-medium truncate">
+                                {inquiry.job?.title || '求人未指定'}
+                              </p>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 line-clamp-2 ml-11">
+                            {inquiry.content}
+                          </p>
+                        </div>
+                        <div className="ml-4 flex flex-col items-end space-y-1">
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r ${statusStyle.gradient} ${statusStyle.text}`}>
+                            <span className="mr-1">{statusStyle.icon}</span>
+                            {statusStyle.label}
+                          </span>
+                          <p className="text-xs text-slate-400">
+                            {new Date(inquiry.createdAt).toLocaleDateString('ja-JP')}
+                          </p>
+                        </div>
                       </div>
-                      <div className="ml-2 flex-shrink-0">
-                        <span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5 bg-blue-100 text-blue-800">
-                          {inquiry.status}
-                        </span>
-                      </div>
-                    </div>
-                  </li>
-                ))
+                    </li>
+                  );
+                })
               )}
             </ul>
           </div>
         </div>
 
-        {selectedInquiry && (
+        {/* Inquiry Detail Panel */}
+        {selectedInquiry ? (
           <div className="lg:col-span-1">
-            <div className="bg-white shadow sm:rounded-lg">
-              <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+            <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-100 sticky top-6">
+              <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4">
+                <h3 className="text-lg font-bold text-white flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                   問い合わせ詳細
                 </h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      応募者名
-                    </label>
-                    <p className="mt-1 text-sm text-gray-900">
-                      {selectedInquiry.applicantName || '-'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      メールアドレス
-                    </label>
-                    <p className="mt-1 text-sm text-gray-900">
-                      {selectedInquiry.applicantEmail || '-'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      内容
-                    </label>
-                    <p className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">
-                      {selectedInquiry.content}
-                    </p>
-                  </div>
-                  {selectedInquiry.responses && selectedInquiry.responses.length > 0 && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        返信案
-                      </label>
-                      {selectedInquiry.responses.map((response: any) => (
-                        <div key={response.id} className="mt-2 p-3 bg-gray-50 rounded border">
-                          <p className="text-sm text-gray-900 whitespace-pre-wrap">
-                            {response.content}
-                          </p>
-                          {!response.isSent && (
-                            <button
-                              onClick={() => handleSend(response.id)}
-                              className="mt-2 text-sm text-indigo-600 hover:text-indigo-800"
-                            >
-                              送信
-                            </button>
-                          )}
-                          {response.isSent && (
-                            <p className="mt-2 text-xs text-green-600">送信済み</p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <button
-                    onClick={handleGenerateResponse}
-                    disabled={generating}
-                    className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                  >
-                    {generating ? '生成中...' : '返信案生成'}
-                  </button>
-                </div>
               </div>
+              <div className="p-6 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl">
+                  <label className="block text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">
+                    応募者名
+                  </label>
+                  <p className="text-sm font-black text-slate-900">
+                    {selectedInquiry.applicantName || '-'}
+                  </p>
+                </div>
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 rounded-xl">
+                  <label className="block text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
+                    メールアドレス
+                  </label>
+                  <p className="text-sm font-black text-slate-900 break-all">
+                    {selectedInquiry.applicantEmail || '-'}
+                  </p>
+                </div>
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-4 rounded-xl">
+                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                    問い合わせ内容
+                  </label>
+                  <p className="text-sm text-slate-900 whitespace-pre-wrap">
+                    {selectedInquiry.content}
+                  </p>
+                </div>
+                {selectedInquiry.responses && selectedInquiry.responses.length > 0 && (
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                      返信案
+                    </label>
+                    {selectedInquiry.responses.map((response: any) => (
+                      <div key={response.id} className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200">
+                        <p className="text-sm text-slate-900 whitespace-pre-wrap mb-3">
+                          {response.content}
+                        </p>
+                        {!response.isSent ? (
+                          <button
+                            onClick={() => handleSend(response.id)}
+                            className="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+                          >
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            </svg>
+                            送信する
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-center py-2 text-green-700 font-bold">
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            送信済み
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <button
+                  onClick={handleGenerateResponse}
+                  disabled={generating}
+                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                >
+                  {generating ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      生成中...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      返信案生成
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="lg:col-span-1">
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-dashed border-slate-300 rounded-2xl p-12 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-200 to-slate-300 rounded-full mb-4">
+                <svg className="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-bold text-slate-700 mb-2">問い合わせを選択してください</h3>
+              <p className="text-xs text-slate-500">左側から確認する問い合わせをクリックします</p>
             </div>
           </div>
         )}
       </div>
+
+      <style jsx>{`
+        @keyframes fadeInLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }

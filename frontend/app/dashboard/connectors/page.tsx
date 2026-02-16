@@ -23,6 +23,15 @@ const connectorTypeIcons: Record<string, string> = {
   dummy: '🔧',
 };
 
+const connectorTypeColors: Record<string, { gradient: string; text: string }> = {
+  indeed: { gradient: 'from-blue-500 to-cyan-500', text: 'text-blue-600' },
+  'kyujin-box': { gradient: 'from-orange-500 to-amber-500', text: 'text-orange-600' },
+  rikunabi: { gradient: 'from-indigo-500 to-purple-500', text: 'text-indigo-600' },
+  mynavi: { gradient: 'from-sky-500 to-blue-500', text: 'text-sky-600' },
+  doda: { gradient: 'from-rose-500 to-pink-500', text: 'text-rose-600' },
+  dummy: { gradient: 'from-slate-500 to-gray-500', text: 'text-slate-600' },
+};
+
 export default function ConnectorsPage() {
   const [connectors, setConnectors] = useState<Connector[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,129 +98,218 @@ export default function ConnectorsPage() {
   };
 
   if (loading) {
-    return <div className="px-4 sm:px-0">読み込み中...</div>;
+    return (
+      <div className="px-4 sm:px-0 flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-cyan-500 border-t-transparent"></div>
+          <p className="mt-4 text-gray-600 font-medium">読み込み中...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="px-4 sm:px-0">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-3xl font-bold text-gray-900">コネクタ設定</h1>
-          <p className="mt-2 text-sm text-gray-700">
-            求人媒体APIとの連携設定を管理します
-          </p>
-        </div>
-        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-          <a
-            href="/dashboard/connectors/new"
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
-          >
-            新規コネクタ追加
-          </a>
+      {/* Header */}
+      <div className="mb-8">
+        <div className="sm:flex sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-4xl font-black text-gray-900 mb-2 bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+              コネクタ設定
+            </h1>
+            <p className="text-gray-600 flex items-center space-x-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>求人媒体APIとの連携設定を管理します</span>
+            </p>
+          </div>
+          <div className="mt-4 sm:mt-0">
+            <a
+              href="/dashboard/connectors/new"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              新規コネクタ追加
+            </a>
+          </div>
         </div>
       </div>
 
       {error && (
-        <div className="mt-4 rounded-md bg-red-50 p-4">
-          <div className="text-sm text-red-800">{error}</div>
+        <div className="mb-6 bg-gradient-to-r from-red-50 to-pink-50 border-l-4 border-red-500 rounded-lg p-4 shadow-md">
+          <div className="flex items-center">
+            <svg className="w-6 h-6 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-red-800 font-medium">{error}</span>
+          </div>
         </div>
       )}
 
-      <div className="mt-8 flex flex-col">
-        <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      コネクタ名
-                    </th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      媒体タイプ
-                    </th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      ステータス
-                    </th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      作成日
-                    </th>
-                    <th className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                      <span className="sr-only">操作</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {connectors.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="px-3 py-4 text-sm text-gray-500 text-center">
-                        コネクタが登録されていません
-                      </td>
-                    </tr>
-                  ) : (
-                    connectors.map((connector) => (
-                      <tr key={connector.id}>
-                        <td className="px-3 py-4 text-sm font-medium text-gray-900">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xl">{connectorTypeIcons[connector.type] || '📡'}</span>
-                            <span>{connector.name}</span>
-                          </div>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {connectorTypeLabels[connector.type] || connector.type}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm">
-                          <span
-                            className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                              connector.isActive
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-gray-100 text-gray-800'
-                            }`}
-                          >
-                            {connector.isActive ? '有効' : '無効'}
-                          </span>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {new Date(connector.createdAt).toLocaleDateString('ja-JP')}
-                        </td>
-                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                          <div className="flex justify-end gap-2">
-                            <button
-                              onClick={() => handleTestConnection(connector.id)}
-                              disabled={testingId === connector.id}
-                              className="text-indigo-600 hover:text-indigo-900 disabled:text-gray-400"
-                            >
-                              {testingId === connector.id ? 'テスト中...' : '接続テスト'}
-                            </button>
-                            <a
-                              href={`/dashboard/connectors/${connector.id}`}
-                              className="text-indigo-600 hover:text-indigo-900"
-                            >
-                              編集
-                            </a>
-                            <button
-                              onClick={() => handleToggleActive(connector.id, connector.isActive)}
-                              className="text-yellow-600 hover:text-yellow-900"
-                            >
-                              {connector.isActive ? '無効化' : '有効化'}
-                            </button>
-                            <button
-                              onClick={() => handleDelete(connector.id)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              削除
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+      {/* Connector Cards Grid */}
+      {connectors.length === 0 ? (
+        <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-dashed border-slate-300 rounded-2xl p-12 text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-slate-200 to-slate-300 rounded-full mb-6">
+            <svg className="w-10 h-10 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
           </div>
+          <h3 className="text-xl font-bold text-slate-700 mb-2">コネクタが登録されていません</h3>
+          <p className="text-slate-500 mb-6">求人媒体と連携を開始しましょう</p>
+          <a
+            href="/dashboard/connectors/new"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            新規コネクタを追加
+          </a>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {connectors.map((connector, index) => {
+            const colors = connectorTypeColors[connector.type] || connectorTypeColors.dummy;
+            return (
+              <div
+                key={connector.id}
+                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-cyan-200 transform hover:-translate-y-1"
+                style={{
+                  animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`
+                }}
+              >
+                {/* Card Header */}
+                <div className={`relative p-6 bg-gradient-to-br ${colors.gradient} overflow-hidden`}>
+                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
+                  <div className="relative z-10 flex items-start justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl text-4xl">
+                        {connectorTypeIcons[connector.type] || '📡'}
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-white/80 uppercase tracking-wider">
+                          {connectorTypeLabels[connector.type] || connector.type}
+                        </p>
+                        <h3 className="text-lg font-black text-white">
+                          {connector.name}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card Body */}
+                <div className="p-6">
+                  <div className="space-y-3 mb-4">
+                    {/* Status */}
+                    <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                      <span className="text-sm font-bold text-slate-700">ステータス</span>
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+                          connector.isActive
+                            ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700'
+                            : 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700'
+                        }`}
+                      >
+                        {connector.isActive ? (
+                          <>
+                            <span className="mr-1">✅</span>
+                            有効
+                          </>
+                        ) : (
+                          <>
+                            <span className="mr-1">⏸</span>
+                            無効
+                          </>
+                        )}
+                      </span>
+                    </div>
+
+                    {/* Created Date */}
+                    <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                      <span className="text-sm font-bold text-slate-700">作成日</span>
+                      <span className="text-sm font-medium text-slate-600">
+                        {new Date(connector.createdAt).toLocaleDateString('ja-JP')}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex flex-col space-y-2 pt-4 border-t border-slate-100">
+                    <button
+                      onClick={() => handleTestConnection(connector.id)}
+                      disabled={testingId === connector.id}
+                      className="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 font-semibold rounded-lg hover:from-blue-100 hover:to-cyan-100 transition-all disabled:opacity-50"
+                    >
+                      {testingId === connector.id ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          テスト中...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          接続テスト
+                        </>
+                      )}
+                    </button>
+
+                    <div className="flex items-center space-x-2">
+                      <a
+                        href={`/dashboard/connectors/${connector.id}`}
+                        className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-slate-50 to-slate-100 text-slate-700 font-semibold rounded-lg hover:from-slate-100 hover:to-slate-200 transition-all"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        編集
+                      </a>
+                      <button
+                        onClick={() => handleToggleActive(connector.id, connector.isActive)}
+                        className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 font-semibold rounded-lg hover:from-amber-100 hover:to-orange-100 transition-all"
+                      >
+                        {connector.isActive ? '無効化' : '有効化'}
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => handleDelete(connector.id)}
+                      className="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-red-50 to-pink-50 text-red-600 font-semibold rounded-lg hover:from-red-100 hover:to-pink-100 transition-all"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      削除
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
