@@ -89,7 +89,8 @@ export class TextGenerationProcessor implements OnModuleInit {
 
       await job.updateProgress(50);
 
-      // Claude APIを使用してテキスト生成
+      // OpenAI APIを使用してテキスト生成
+      console.log(`📝 Generating text for job ${jobId}...`);
       const generatedContent = await this.llmService.generateJobText({
         title: jobData.title,
         location: jobData.location,
@@ -99,10 +100,12 @@ export class TextGenerationProcessor implements OnModuleInit {
         requirements: jobData.requirements,
         customPrompt: prompt,
       });
+      console.log(`✅ Text generated (${generatedContent.length} chars)`);
 
       await job.updateProgress(70);
 
       // バージョン保存
+      console.log(`💾 Saving version ${newVersion} to database...`);
       const textVersion = await this.prisma.jobTextVersion.create({
         data: {
           jobId,
@@ -111,6 +114,7 @@ export class TextGenerationProcessor implements OnModuleInit {
           generatedBy: 'ai',
         },
       });
+      console.log(`✅ Version saved: ${textVersion.id}`);
 
       await job.updateProgress(90);
 
