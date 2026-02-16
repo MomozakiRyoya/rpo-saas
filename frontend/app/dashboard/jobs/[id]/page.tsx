@@ -11,7 +11,7 @@ export default function JobDetailPage() {
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
-  const [textVersions, setTextVersions] = useState<any[]>([]);
+  const [textVersion, setTextVersion] = useState<any | null>(null);
 
   useEffect(() => {
     if (params.id) {
@@ -23,9 +23,9 @@ export default function JobDetailPage() {
     try {
       const data = await jobService.getOne(params.id as string);
       setJob(data);
-      // テキストバージョンを取得
+      // テキストバージョンを取得（最新の1つのみ）
       const versions = await jobService.getTextVersions(params.id as string);
-      setTextVersions(versions);
+      setTextVersion(versions.length > 0 ? versions[0] : null);
     } catch (err) {
       console.error('Failed to load job:', err);
     } finally {
@@ -134,55 +134,38 @@ export default function JobDetailPage() {
         </div>
       </div>
 
-      {textVersions.length > 0 && (
+      {textVersion && (
         <div className="mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-lg overflow-hidden sm:rounded-xl border border-blue-100">
           <div className="px-6 py-5 sm:px-8 bg-white/80 backdrop-blur">
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">
+                    生成されたテキスト
+                  </h3>
                 </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">
-                  生成されたテキスト
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {textVersions.length}件のバージョンが生成されています
-                </p>
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{new Date(textVersion.createdAt).toLocaleString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
               </div>
             </div>
           </div>
-          <div className="divide-y divide-blue-100">
-            {textVersions.map((version, index) => (
-              <div key={version.id} className="px-6 py-6 sm:p-8 hover:bg-white/50 transition-colors duration-200">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center space-x-3">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-500 text-white shadow-sm">
-                      v{version.version}
-                    </span>
-                    {index === 0 && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-800">
-                        最新
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-500">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{new Date(version.createdAt).toLocaleString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-                  </div>
-                </div>
-                <div className="prose prose-sm max-w-none">
-                  <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 text-gray-800 whitespace-pre-wrap leading-relaxed">
-                    {version.content}
-                  </div>
-                </div>
+          <div className="px-6 py-6 sm:p-8">
+            <div className="prose prose-sm max-w-none">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 text-gray-800 whitespace-pre-wrap leading-relaxed">
+                {textVersion.content}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       )}

@@ -79,13 +79,10 @@ export class TextGenerationProcessor implements OnModuleInit {
 
       await job.updateProgress(30);
 
-      // 最新バージョン番号を取得
-      const latestVersion = await this.prisma.jobTextVersion.findFirst({
+      // 既存のテキストバージョンを確認
+      const existingVersion = await this.prisma.jobTextVersion.findFirst({
         where: { jobId },
-        orderBy: { version: 'desc' },
       });
-
-      const newVersion = (latestVersion?.version || 0) + 1;
 
       await job.updateProgress(50);
 
@@ -104,17 +101,30 @@ export class TextGenerationProcessor implements OnModuleInit {
 
       await job.updateProgress(70);
 
-      // バージョン保存
-      console.log(`💾 Saving version ${newVersion} to database...`);
-      const textVersion = await this.prisma.jobTextVersion.create({
-        data: {
-          jobId,
-          version: newVersion,
-          content: generatedContent,
-          generatedBy: 'ai',
-        },
-      });
-      console.log(`✅ Version saved: ${textVersion.id}`);
+      // テキストを保存または更新（常に1つのみ）
+      let textVersion;
+      if (existingVersion) {
+        console.log(`💾 Updating existing text version...`);
+        textVersion = await this.prisma.jobTextVersion.update({
+          where: { id: existingVersion.id },
+          data: {
+            content: generatedContent,
+            generatedBy: 'ai',
+          },
+        });
+        console.log(`✅ Version updated: ${textVersion.id}`);
+      } else {
+        console.log(`💾 Creating new text version...`);
+        textVersion = await this.prisma.jobTextVersion.create({
+          data: {
+            jobId,
+            version: 1,
+            content: generatedContent,
+            generatedBy: 'ai',
+          },
+        });
+        console.log(`✅ Version created: ${textVersion.id}`);
+      }
 
       await job.updateProgress(90);
 
