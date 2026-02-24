@@ -101,17 +101,23 @@ export default function LoginPage() {
               パスワードをお忘れの方はこちら
             </a>
           </div>
-          <div className="text-sm text-center text-gray-600">
-            <p className="mt-2">デモユーザー:</p>
-            <p>admin@demo.com / password123</p>
-          </div>
-          <div className="text-sm text-center mt-4">
-            <a
-              href="/portal/login"
-              className="text-teal-600 hover:text-teal-700"
-            >
-              採用企業ポータルはこちら →
-            </a>
+          <div className="text-sm text-center mt-4 space-y-2">
+            <div>
+              <a
+                href="/register"
+                className="text-indigo-600 hover:text-indigo-500 font-medium"
+              >
+                アカウントをお持ちでない方はこちら →
+              </a>
+            </div>
+            <div>
+              <a
+                href="/portal/login"
+                className="text-teal-600 hover:text-teal-700"
+              >
+                採用企業ポータルはこちら →
+              </a>
+            </div>
           </div>
         </form>
       </div>

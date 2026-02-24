@@ -123,16 +123,6 @@ export default function PortalLoginPage() {
               パスワードをお忘れの方はこちら
             </a>
           </div>
-
-          <div className="mt-4 pt-5 border-t border-gray-100">
-            <p className="text-xs text-gray-400 text-center mb-2">
-              デモアカウント
-            </p>
-            <div className="bg-teal-50 rounded-xl p-3 text-xs text-teal-800 text-center space-y-0.5">
-              <p className="font-medium">customer@demo.com</p>
-              <p className="text-teal-600">password123</p>
-            </div>
-          </div>
         </div>
 
         <div className="mt-6 text-center">
