@@ -198,3 +198,197 @@ export interface Resume {
   createdAt: string;
   updatedAt: string;
 }
+
+// ==================== New Types ====================
+
+export interface CandidateATS {
+  id: string;
+  tenantId: string;
+  name: string;
+  email: string;
+  phone?: string;
+  skills: string[];
+  tags: string[];
+  score?: number;
+  resumeUrl?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+  applications?: CandidateApplication[];
+}
+
+export type ApplicationStage =
+  | "SCREENING"
+  | "FIRST_INTERVIEW"
+  | "SECOND_INTERVIEW"
+  | "OFFER"
+  | "HIRED"
+  | "REJECTED";
+
+export interface CandidateApplication {
+  id: string;
+  candidateId: string;
+  candidate?: CandidateATS;
+  jobId: string;
+  job?: { id: string; title: string };
+  stage: ApplicationStage;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface JobTemplate {
+  id: string;
+  tenantId: string;
+  name: string;
+  category?: string;
+  title?: string;
+  jobDescription?: string;
+  promptTemplate?: string;
+  location?: string;
+  salary?: string;
+  employmentType?: string;
+  requirements?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface JobComment {
+  id: string;
+  jobId: string;
+  userId: string;
+  user?: { id: string; name: string; email: string };
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface JobAssignment {
+  id: string;
+  jobId: string;
+  userId: string;
+  user?: { id: string; name: string; email: string };
+  createdAt: string;
+}
+
+export interface WebhookEndpoint {
+  id: string;
+  tenantId: string;
+  url: string;
+  events: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WebhookDelivery {
+  id: string;
+  endpointId: string;
+  event: string;
+  payload: Record<string, any>;
+  responseStatus?: number;
+  responseBody?: string;
+  success: boolean;
+  createdAt: string;
+}
+
+export interface ScoreCard {
+  id: string;
+  name: string;
+  jobId?: string;
+  tenantId: string;
+  createdAt: string;
+  updatedAt: string;
+  criteria?: ScoreCardCriteria[];
+  job?: { id: string; title: string };
+}
+
+export interface ScoreCardCriteria {
+  id: string;
+  scoreCardId: string;
+  name: string;
+  weight: number;
+  maxScore: number;
+  order: number;
+}
+
+export interface InterviewScore {
+  id: string;
+  criteriaId: string;
+  candidateId: string;
+  evaluatorId: string;
+  score: number;
+  comment?: string;
+  createdAt: string;
+}
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  stripePriceId?: string;
+  price: number;
+  features: Record<string, any>;
+  isActive: boolean;
+}
+
+export interface TenantSubscription {
+  id: string;
+  tenantId: string;
+  planId: string;
+  plan?: SubscriptionPlan;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
+  status: "ACTIVE" | "PAST_DUE" | "CANCELED" | "TRIALING";
+  currentPeriodStart?: string;
+  currentPeriodEnd?: string;
+}
+
+// ==================== Portal Types ====================
+
+export interface PortalJob {
+  id: string;
+  title: string;
+  status: string;
+  description?: string;
+  location?: string;
+  salary?: string;
+  employmentType?: string;
+  requirements?: string;
+  createdAt: string;
+  updatedAt?: string;
+  customer?: { id: string; name: string };
+  approvals?: Array<{ id: string; status: string; requestedAt: string }>;
+  publications?: Array<{ id: string; status: string; connector?: { name: string } }>;
+  textVersions?: Array<{ id: string; version: number; content: string; generatedBy?: string }>;
+  imageVersions?: Array<{ id: string; version: number; imageUrl: string; generatedBy?: string }>;
+}
+
+export interface PortalApproval {
+  id: string;
+  status: string;
+  requestedAt: string;
+  job?: PortalJob;
+}
+
+export interface PortalAnalytics {
+  totalImpressions: number;
+  totalClicks: number;
+  totalApplications: number;
+  avgClickRate: number;
+  jobMetrics: Array<{
+    jobId: string;
+    title: string;
+    impressions: number;
+    clicks: number;
+    applications: number;
+  }>;
+}
+
+export interface PortalUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  customerName: string | null;
+  customerId: string | null;
+}

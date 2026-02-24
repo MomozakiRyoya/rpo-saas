@@ -17,8 +17,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await authService.login(email, password);
-      router.push("/dashboard");
+      const res = await authService.login(email, password);
+      // CUSTOMER ロールは顧客ポータルへリダイレクト
+      if (res.user.role === "CUSTOMER") {
+        router.push("/portal/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || "ログインに失敗しました");
     } finally {
@@ -99,6 +104,14 @@ export default function LoginPage() {
           <div className="text-sm text-center text-gray-600">
             <p className="mt-2">デモユーザー:</p>
             <p>admin@demo.com / password123</p>
+          </div>
+          <div className="text-sm text-center mt-4">
+            <a
+              href="/portal/login"
+              className="text-teal-600 hover:text-teal-700"
+            >
+              採用企業ポータルはこちら →
+            </a>
           </div>
         </form>
       </div>

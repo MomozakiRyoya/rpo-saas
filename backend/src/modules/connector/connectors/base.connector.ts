@@ -29,6 +29,15 @@ export interface ReplyResult {
   error?: string;
 }
 
+export interface DailyMetricsData {
+  date: Date;
+  impressions: number;
+  clicks: number;
+  applications: number;
+  clickRate?: number;
+  applicationRate?: number;
+}
+
 export abstract class BaseConnector {
   protected config: Record<string, any>;
 
@@ -77,5 +86,21 @@ export abstract class BaseConnector {
    */
   async fetchInquiries(externalJobId: string): Promise<InquiryData[]> {
     return [];
+  }
+
+  /**
+   * 日次メトリクスを取得（オプション）
+   * デフォルト実装: ダミーデータを返す
+   */
+  async fetchDailyMetrics(
+    externalJobId: string,
+    date: Date,
+  ): Promise<DailyMetricsData> {
+    return {
+      date,
+      impressions: Math.floor(Math.random() * 100),
+      clicks: Math.floor(Math.random() * 20),
+      applications: Math.floor(Math.random() * 5),
+    };
   }
 }

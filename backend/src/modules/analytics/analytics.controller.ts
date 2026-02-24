@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Query, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AnalyticsService } from './analytics.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -29,5 +29,12 @@ export class AnalyticsController {
   @ApiOperation({ summary: 'サマリー取得' })
   async getSummary(@Request() req) {
     return this.analyticsService.getSummary(req.user.tenantId);
+  }
+
+  @Post('collect')
+  @ApiOperation({ summary: '日次メトリクス手動収集' })
+  async collectMetrics() {
+    await this.analyticsService.collectDailyMetrics();
+    return { message: 'Metrics collection started' };
   }
 }

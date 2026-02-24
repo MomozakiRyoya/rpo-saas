@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { ScheduleModule as NestScheduleModule } from "@nestjs/schedule";
 import { PrismaModule } from "./prisma/prisma.module";
 import { LlmModule } from "./modules/llm/llm.module";
 import { EmailModule } from "./modules/email/email.module";
@@ -33,6 +34,7 @@ import { ReportModule } from "./modules/report/report.module";
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    NestScheduleModule.forRoot(),
     PrismaModule,
     // QueueModuleの依存モジュールを先に読み込む
     LlmModule,

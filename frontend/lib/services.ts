@@ -8,6 +8,18 @@ import {
   Candidate,
   InterviewLog,
   Resume,
+  CandidateATS,
+  CandidateApplication,
+  ApplicationStage,
+  JobTemplate,
+  JobComment,
+  JobAssignment,
+  WebhookEndpoint,
+  WebhookDelivery,
+  ScoreCard,
+  InterviewScore,
+  SubscriptionPlan,
+  TenantSubscription,
 } from "@/types";
 
 // 顧客管理
@@ -353,6 +365,253 @@ export const resumeService = {
   },
 };
 
+// 候補者管理（ATS）
+export const candidateATSService = {
+  async getAll(filters?: {
+    q?: string;
+    stage?: string;
+    tag?: string;
+    jobId?: string;
+    page?: number;
+  }): Promise<PaginatedResponse<CandidateATS>> {
+    const response = await api.get("/api/candidates", { params: filters });
+    return response.data;
+  },
+  async getOne(id: string): Promise<CandidateATS> {
+    const response = await api.get(`/api/candidates/${id}`);
+    return response.data;
+  },
+  async create(data: {
+    name: string;
+    email: string;
+    phone?: string;
+    skills?: string[];
+    tags?: string[];
+    notes?: string;
+  }): Promise<CandidateATS> {
+    const response = await api.post("/api/candidates", data);
+    return response.data;
+  },
+  async update(id: string, data: Partial<CandidateATS>): Promise<CandidateATS> {
+    const response = await api.patch(`/api/candidates/${id}`, data);
+    return response.data;
+  },
+  async delete(id: string): Promise<void> {
+    await api.delete(`/api/candidates/${id}`);
+  },
+  async getApplications(id: string): Promise<CandidateApplication[]> {
+    const response = await api.get(`/api/candidates/${id}/applications`);
+    return response.data;
+  },
+  async linkToJob(id: string, jobId: string): Promise<CandidateApplication> {
+    const response = await api.post(`/api/candidates/${id}/link-job`, {
+      jobId,
+    });
+    return response.data;
+  },
+  async updateStage(
+    applicationId: string,
+    stage: ApplicationStage,
+  ): Promise<CandidateApplication> {
+    const response = await api.patch(
+      `/api/candidates/applications/${applicationId}/stage`,
+      { stage },
+    );
+    return response.data;
+  },
+};
+
+// テンプレート管理
+export const templateService = {
+  async getAll(filters?: { category?: string }): Promise<JobTemplate[]> {
+    const response = await api.get("/api/templates", { params: filters });
+    return response.data;
+  },
+  async getOne(id: string): Promise<JobTemplate> {
+    const response = await api.get(`/api/templates/${id}`);
+    return response.data;
+  },
+  async create(data: Partial<JobTemplate>): Promise<JobTemplate> {
+    const response = await api.post("/api/templates", data);
+    return response.data;
+  },
+  async update(id: string, data: Partial<JobTemplate>): Promise<JobTemplate> {
+    const response = await api.patch(`/api/templates/${id}`, data);
+    return response.data;
+  },
+  async delete(id: string): Promise<void> {
+    await api.delete(`/api/templates/${id}`);
+  },
+  async apply(id: string, jobId: string): Promise<void> {
+    await api.post(`/api/templates/${id}/apply`, { jobId });
+  },
+};
+
+// コメント・アサイン
+export const commentService = {
+  async getComments(jobId: string): Promise<JobComment[]> {
+    const response = await api.get(`/api/jobs/${jobId}/comments`);
+    return response.data;
+  },
+  async addComment(jobId: string, content: string): Promise<JobComment> {
+    const response = await api.post(`/api/jobs/${jobId}/comments`, { content });
+    return response.data;
+  },
+  async deleteComment(jobId: string, commentId: string): Promise<void> {
+    await api.delete(`/api/jobs/${jobId}/comments/${commentId}`);
+  },
+  async getAssignments(jobId: string): Promise<JobAssignment[]> {
+    const response = await api.get(`/api/jobs/${jobId}/assignments`);
+    return response.data;
+  },
+  async addAssignment(jobId: string, userId: string): Promise<JobAssignment> {
+    const response = await api.post(`/api/jobs/${jobId}/assignments`, {
+      userId,
+    });
+    return response.data;
+  },
+  async removeAssignment(jobId: string, userId: string): Promise<void> {
+    await api.delete(`/api/jobs/${jobId}/assignments/${userId}`);
+  },
+};
+
+// Webhook管理
+export const webhookService = {
+  async getAll(): Promise<WebhookEndpoint[]> {
+    const response = await api.get("/api/webhooks");
+    return response.data;
+  },
+  async create(data: {
+    url: string;
+    events: string[];
+  }): Promise<WebhookEndpoint> {
+    const response = await api.post("/api/webhooks", data);
+    return response.data;
+  },
+  async update(
+    id: string,
+    data: { url?: string; events?: string[]; isActive?: boolean },
+  ): Promise<WebhookEndpoint> {
+    const response = await api.patch(`/api/webhooks/${id}`, data);
+    return response.data;
+  },
+  async delete(id: string): Promise<void> {
+    await api.delete(`/api/webhooks/${id}`);
+  },
+  async getDeliveries(id: string): Promise<WebhookDelivery[]> {
+    const response = await api.get(`/api/webhooks/${id}/deliveries`);
+    return response.data;
+  },
+};
+
+// スコアカード
+export const scorecardService = {
+  async getAll(): Promise<ScoreCard[]> {
+    const response = await api.get("/api/scorecards");
+    return response.data;
+  },
+  async getOne(id: string): Promise<ScoreCard> {
+    const response = await api.get(`/api/scorecards/${id}`);
+    return response.data;
+  },
+  async create(data: {
+    name: string;
+    jobId?: string;
+    criteria: {
+      name: string;
+      weight: number;
+      maxScore: number;
+      order: number;
+    }[];
+  }): Promise<ScoreCard> {
+    const response = await api.post("/api/scorecards", data);
+    return response.data;
+  },
+  async delete(id: string): Promise<void> {
+    await api.delete(`/api/scorecards/${id}`);
+  },
+  async addScore(
+    scorecardId: string,
+    data: {
+      criteriaId: string;
+      candidateId: string;
+      score: number;
+      comment?: string;
+    },
+  ): Promise<InterviewScore> {
+    const response = await api.post(
+      `/api/scorecards/${scorecardId}/score`,
+      data,
+    );
+    return response.data;
+  },
+  async getCandidateScores(candidateId: string): Promise<any> {
+    const response = await api.get(`/api/candidates/${candidateId}/scores`);
+    return response.data;
+  },
+};
+
+// サブスクリプション
+export const subscriptionService = {
+  async getPlans(): Promise<SubscriptionPlan[]> {
+    const response = await api.get("/api/subscription/plans");
+    return response.data;
+  },
+  async getCurrent(): Promise<TenantSubscription | null> {
+    try {
+      const response = await api.get("/api/subscription/current");
+      return response.data;
+    } catch {
+      return null;
+    }
+  },
+  async createCheckout(
+    planId: string,
+    successUrl: string,
+    cancelUrl: string,
+  ): Promise<{ url: string }> {
+    const response = await api.post("/api/subscription/checkout", {
+      planId,
+      successUrl,
+      cancelUrl,
+    });
+    return response.data;
+  },
+  async getPortalUrl(returnUrl: string): Promise<{ url: string }> {
+    const response = await api.post("/api/subscription/portal", { returnUrl });
+    return response.data;
+  },
+};
+
+// マッチング
+export const matchingService = {
+  async matchCandidates(
+    jobId: string,
+  ): Promise<
+    Array<{ candidate: CandidateATS; matchScore: number; reasons: string[] }>
+  > {
+    const response = await api.post(`/api/jobs/${jobId}/match`);
+    return response.data;
+  },
+};
+
+// レポート
+export const reportService = {
+  async downloadJobReport(jobId: string): Promise<Blob> {
+    const response = await api.get(`/api/reports/jobs/${jobId}`, {
+      responseType: "blob",
+    });
+    return response.data;
+  },
+  async downloadMonthlyReport(month: string): Promise<Blob> {
+    const response = await api.get("/api/reports/monthly", {
+      params: { month },
+      responseType: "blob",
+    });
+    return response.data;
+  },
+};
+
 // 分析
 export const analyticsService = {
   async getDailyMetrics(filters?: {
@@ -367,6 +626,44 @@ export const analyticsService = {
 
   async getSummary() {
     const response = await api.get("/api/analytics/summary");
+    return response.data;
+  },
+};
+
+// ポータル（顧客向け）
+export const portalService = {
+  async getMe() {
+    const response = await api.get('/api/portal/me');
+    return response.data;
+  },
+
+  async getJobs(params?: { status?: string }) {
+    const response = await api.get('/api/portal/jobs', { params });
+    return response.data;
+  },
+
+  async getJob(id: string) {
+    const response = await api.get(`/api/portal/jobs/${id}`);
+    return response.data;
+  },
+
+  async getApprovals() {
+    const response = await api.get('/api/portal/approvals');
+    return response.data;
+  },
+
+  async approve(id: string) {
+    const response = await api.post(`/api/portal/approvals/${id}/approve`);
+    return response.data;
+  },
+
+  async reject(id: string, comment?: string) {
+    const response = await api.post(`/api/portal/approvals/${id}/reject`, { comment });
+    return response.data;
+  },
+
+  async getAnalytics() {
+    const response = await api.get('/api/portal/analytics');
     return response.data;
   },
 };
