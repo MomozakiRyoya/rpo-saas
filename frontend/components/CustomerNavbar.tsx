@@ -111,7 +111,19 @@ export default function CustomerNavbar() {
   };
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full" id="portal-sidebar-inner">
+      <style>{`
+        #portal-sidebar-inner,
+        #portal-sidebar-inner * {
+          color: white !important;
+        }
+        #portal-sidebar-inner .nav-inactive {
+          color: rgba(255,255,255,0.8) !important;
+        }
+        #portal-sidebar-inner .nav-section-label {
+          color: rgba(255,255,255,0.5) !important;
+        }
+      `}</style>
       {/* ヘッダー */}
       <div className="flex items-center justify-between px-4 py-4 border-b border-teal-700/50">
         <div className="flex items-center space-x-2 min-w-0">
