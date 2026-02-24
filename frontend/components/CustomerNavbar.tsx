@@ -136,7 +136,7 @@ export default function CustomerNavbar() {
             </h1>
             <div className="flex items-center space-x-1">
               <span className="w-2 h-2 bg-emerald-400 rounded-full shrink-0"></span>
-              <span className="text-white/70 text-xs truncate">
+              <span className="text-white text-xs truncate opacity-70">
                 {user?.tenantName || "読み込み中..."}
               </span>
             </div>
@@ -148,7 +148,7 @@ export default function CustomerNavbar() {
       <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
         {NAV_SECTIONS.map((section) => (
           <div key={section.label}>
-            <p className="px-3 mb-1 text-xs font-semibold text-white/50 uppercase tracking-widest">
+            <p className="px-3 mb-1 text-xs font-semibold text-white uppercase tracking-widest opacity-50">
               {section.label}
             </p>
             <ul className="space-y-0.5">
@@ -162,10 +162,14 @@ export default function CustomerNavbar() {
                       className={`flex items-center space-x-2.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150 cursor-pointer ${
                         active
                           ? "bg-white/20 text-white"
-                          : "text-white/80 hover:text-white hover:bg-white/10"
+                          : "text-white hover:bg-white/10 opacity-80 hover:opacity-100"
                       }`}
                     >
-                      <span className={active ? "text-white" : "text-white/70"}>
+                      <span
+                        className={
+                          active ? "text-white" : "text-white opacity-70"
+                        }
+                      >
                         {item.icon}
                       </span>
                       <span>{item.label}</span>
@@ -188,12 +192,14 @@ export default function CustomerNavbar() {
             <p className="text-white text-sm font-semibold truncate leading-tight">
               {user?.name}
             </p>
-            <p className="text-white/60 text-xs truncate">採用企業担当者</p>
+            <p className="text-white text-xs truncate opacity-60">
+              採用企業担当者
+            </p>
           </div>
         </div>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center space-x-2 px-3 py-1.5 rounded-md text-white/80 hover:text-white hover:bg-white/10 text-sm transition-all duration-150 cursor-pointer"
+          className="w-full flex items-center space-x-2 px-3 py-1.5 rounded-md text-white hover:bg-white/10 text-sm transition-all duration-150 cursor-pointer opacity-80 hover:opacity-100"
         >
           <svg
             className="w-4 h-4"
