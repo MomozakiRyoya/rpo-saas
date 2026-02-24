@@ -2,12 +2,13 @@
 
 import { useEffect } from "react";
 
-const ROLE_CONFIG: Record<string, { letter: string; bg: string; fg: string }> = {
-  ADMIN:    { letter: "A", bg: "#dc2626", fg: "#ffffff" }, // red
-  MANAGER:  { letter: "M", bg: "#4f46e5", fg: "#ffffff" }, // indigo
-  MEMBER:   { letter: "R", bg: "#6b7280", fg: "#ffffff" }, // gray
-  CUSTOMER: { letter: "C", bg: "#0d9488", fg: "#ffffff" }, // teal
-};
+const ROLE_CONFIG: Record<string, { letter: string; bg: string; fg: string }> =
+  {
+    ADMIN: { letter: "A", bg: "#dc2626", fg: "#ffffff" }, // red
+    MANAGER: { letter: "M", bg: "#4f46e5", fg: "#ffffff" }, // indigo
+    MEMBER: { letter: "M", bg: "#2563eb", fg: "#ffffff" }, // blue (MANAGER=indigo で色で区別)
+    CUSTOMER: { letter: "C", bg: "#0d9488", fg: "#ffffff" }, // teal
+  };
 
 const DEFAULT = { letter: "R", bg: "#6b7280", fg: "#ffffff" };
 
@@ -46,7 +47,9 @@ export default function DynamicFavicon() {
     const onStorage = (e: StorageEvent) => {
       if (e.key !== "user") return;
       try {
-        const role: string = e.newValue ? (JSON.parse(e.newValue).role ?? "") : "";
+        const role: string = e.newValue
+          ? (JSON.parse(e.newValue).role ?? "")
+          : "";
         const cfg = ROLE_CONFIG[role] ?? DEFAULT;
         setFavicon(buildSvgDataUrl(cfg.letter, cfg.bg, cfg.fg));
       } catch {
