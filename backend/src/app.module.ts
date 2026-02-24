@@ -16,6 +16,7 @@ import { AnalyticsModule } from "./modules/analytics/analytics.module";
 import { AuditModule } from "./modules/audit/audit.module";
 import { QueueModule } from "./modules/queue/queue.module";
 import { PortalModule } from "./modules/portal/portal.module";
+import { NotificationsModule } from "./modules/notifications/notifications.module";
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { PortalModule } from "./modules/portal/portal.module";
     AnalyticsModule,
     AuditModule,
     PortalModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}

@@ -33,18 +33,20 @@ export class JobController {
   @ApiOperation({ summary: "求人一覧取得" })
   @ApiQuery({ name: "status", required: false })
   @ApiQuery({ name: "customerId", required: false })
+  @ApiQuery({ name: "q", required: false })
   @ApiQuery({ name: "page", required: false, type: Number })
   @ApiQuery({ name: "limit", required: false, type: Number })
   async findAll(
     @Request() req,
     @Query("status") status?: string,
     @Query("customerId") customerId?: string,
+    @Query("q") q?: string,
     @Query("page") page?: number,
     @Query("limit") limit?: number,
   ) {
     return this.jobService.findAll(
       req.user.tenantId,
-      { status, customerId },
+      { status, customerId, q },
       Number(page) || 1,
       Number(limit) || 20,
     );

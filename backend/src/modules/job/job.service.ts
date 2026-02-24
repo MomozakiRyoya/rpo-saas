@@ -18,7 +18,7 @@ export class JobService {
 
   async findAll(
     tenantId: string,
-    filters: { status?: string; customerId?: string } = {},
+    filters: { status?: string; customerId?: string; q?: string } = {},
     page: number = 1,
     limit: number = 20,
   ) {
@@ -40,6 +40,20 @@ export class JobService {
     }
     if (filters.customerId) {
       where.customerId = filters.customerId;
+    }
+    if (filters.q) {
+      where.AND = [
+        {
+          OR: [
+            { title: { contains: filters.q, mode: "insensitive" } },
+            { description: { contains: filters.q, mode: "insensitive" } },
+            { location: { contains: filters.q, mode: "insensitive" } },
+            {
+              customer: { name: { contains: filters.q, mode: "insensitive" } },
+            },
+          ],
+        },
+      ];
     }
 
     const [jobs, total] = await Promise.all([
