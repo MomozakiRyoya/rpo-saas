@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import OpenAI from 'openai';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { Injectable } from "@nestjs/common";
+import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 @Injectable()
 export class LlmService {
@@ -9,31 +9,31 @@ export class LlmService {
 
   constructor() {
     try {
-      console.log('🔧 Initializing LlmService...');
+      console.log("🔧 Initializing LlmService...");
 
       // OpenAI の初期化
       const openaiApiKey = process.env.OPENAI_API_KEY;
       if (!openaiApiKey) {
         console.warn(
-          '⚠️ OPENAI_API_KEY is not set. Text generation will use mock responses.',
+          "⚠️ OPENAI_API_KEY is not set. Text generation will use mock responses.",
         );
       }
       this.openaiClient = new OpenAI({
-        apiKey: openaiApiKey || 'dummy-key',
+        apiKey: openaiApiKey || "dummy-key",
       });
 
       // Google Gemini の初期化
       const geminiApiKey = process.env.GEMINI_API_KEY;
       if (!geminiApiKey) {
         console.warn(
-          '⚠️ GEMINI_API_KEY is not set. Image generation will use mock responses.',
+          "⚠️ GEMINI_API_KEY is not set. Image generation will use mock responses.",
         );
       }
-      this.geminiClient = new GoogleGenerativeAI(geminiApiKey || 'dummy-key');
+      this.geminiClient = new GoogleGenerativeAI(geminiApiKey || "dummy-key");
 
-      console.log('✅ LlmService initialized');
+      console.log("✅ LlmService initialized");
     } catch (error) {
-      console.error('❌ Failed to initialize LlmService:', error);
+      console.error("❌ Failed to initialize LlmService:", error);
       throw error;
     }
   }
@@ -78,30 +78,30 @@ export class LlmService {
 
 【求人情報】
 職種: ${title}
-勤務地: ${location || '未設定'}
-給与: ${salary || '未設定'}
-雇用形態: ${employmentType || '未設定'}
+勤務地: ${location || "未設定"}
+給与: ${salary || "未設定"}
+雇用形態: ${employmentType || "未設定"}
 
 【仕事内容】
-${description || '未設定'}
+${description || "未設定"}
 
 【応募要件】
-${requirements || '未設定'}
+${requirements || "未設定"}
 
-${customPrompt ? `\n【追加指示】\n${customPrompt}` : ''}`;
+${customPrompt ? `\n【追加指示】\n${customPrompt}` : ""}`;
 
     try {
       const response = await this.openaiClient.chat.completions.create({
-        model: 'gpt-4o',
+        model: "gpt-4o",
         max_tokens: 2000,
         temperature: 0.7,
         messages: [
           {
-            role: 'system',
+            role: "system",
             content: systemPrompt,
           },
           {
-            role: 'user',
+            role: "user",
             content: userPrompt,
           },
         ],
@@ -112,11 +112,43 @@ ${customPrompt ? `\n【追加指示】\n${customPrompt}` : ''}`;
         return content;
       }
 
-      throw new Error('No text content in response');
+      throw new Error("No text content in response");
     } catch (error) {
-      console.error('OpenAI API error:', error);
-      console.warn('⚠️ Falling back to mock text generation');
+      console.error("OpenAI API error:", error);
+      console.warn("⚠️ Falling back to mock text generation");
       return this.generateMockJobText(params);
+    }
+  }
+
+  /**
+   * 汎用テキスト生成
+   */
+  async generateText(prompt: string): Promise<string> {
+    if (!process.env.OPENAI_API_KEY) {
+      return `[モック生成]\n\n${prompt.substring(0, 100)}...\n\n※ OPENAI_API_KEY が未設定のためモックレスポンスを返しています。`;
+    }
+
+    try {
+      const response = await this.openaiClient.chat.completions.create({
+        model: "gpt-4o",
+        max_tokens: 3000,
+        temperature: 0.7,
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      });
+
+      const content = response.choices[0]?.message?.content;
+      if (content) {
+        return content;
+      }
+      throw new Error("No text content in response");
+    } catch (error) {
+      console.error("OpenAI generateText error:", error);
+      throw new Error(`Failed to generate text: ${error.message}`);
     }
   }
 
@@ -147,9 +179,9 @@ ${customPrompt ? `\n【追加指示】\n${customPrompt}` : ''}`;
     const userPrompt = `以下の問い合わせに対して、適切な返信案を作成してください。
 
 【問い合わせ者】
-${applicantName || '応募者'}様
+${applicantName || "応募者"}様
 
-${jobTitle ? `【応募求人】\n${jobTitle}\n` : ''}
+${jobTitle ? `【応募求人】\n${jobTitle}\n` : ""}
 【問い合わせ内容】
 ${inquiryContent}
 
@@ -157,16 +189,16 @@ ${inquiryContent}
 
     try {
       const response = await this.openaiClient.chat.completions.create({
-        model: 'gpt-4o',
+        model: "gpt-4o",
         max_tokens: 1500,
         temperature: 0.7,
         messages: [
           {
-            role: 'system',
+            role: "system",
             content: systemPrompt,
           },
           {
-            role: 'user',
+            role: "user",
             content: userPrompt,
           },
         ],
@@ -177,10 +209,10 @@ ${inquiryContent}
         return content;
       }
 
-      throw new Error('No text content in response');
+      throw new Error("No text content in response");
     } catch (error) {
-      console.error('OpenAI API error:', error);
-      console.warn('⚠️ Falling back to mock inquiry response');
+      console.error("OpenAI API error:", error);
+      console.warn("⚠️ Falling back to mock inquiry response");
       return this.generateMockInquiryResponse(params);
     }
   }
@@ -217,24 +249,29 @@ ${inquiryContent}
 
 ## 📍 勤務条件
 
-**勤務地:** ${location || '東京都内（リモートワーク可）'}
-**給与:** ${salary || '経験・スキルに応じて優遇'}
-**雇用形態:** ${employmentType || '正社員'}
+**勤務地:** ${location || "東京都内（リモートワーク可）"}
+**給与:** ${salary || "経験・スキルに応じて優遇"}
+**雇用形態:** ${employmentType || "正社員"}
 
 ## 💼 仕事内容
 
-${description || `${title}として、以下の業務を担当していただきます：
+${
+  description ||
+  `${title}として、以下の業務を担当していただきます：
 
 • プロジェクトの企画・設計・実装
 • チームメンバーとの協力によるサービス開発
 • 新しい技術の導入と最適化
 • コードレビューと品質管理
 
-最新の技術スタックを使用し、自己成長とチーム貢献を両立できる環境です。`}
+最新の技術スタックを使用し、自己成長とチーム貢献を両立できる環境です。`
+}
 
 ## ✨ 応募要件
 
-${requirements || `【必須スキル】
+${
+  requirements ||
+  `【必須スキル】
 • 実務経験2年以上
 • チームでの開発経験
 • 新しい技術への学習意欲
@@ -242,7 +279,8 @@ ${requirements || `【必須スキル】
 【歓迎スキル】
 • リーダー経験
 • OSSへの貢献経験
-• 英語でのコミュニケーション能力`}
+• 英語でのコミュニケーション能力`
+}
 
 ## 🌟 私たちが提供できること
 
@@ -268,11 +306,11 @@ ${requirements || `【必須スキル】
   }): string {
     const { applicantName, inquiryContent, jobTitle } = params;
 
-    return `${applicantName || '応募者'}様
+    return `${applicantName || "応募者"}様
 
 お問い合わせありがとうございます。
 
-${jobTitle ? `【${jobTitle}】へのご応募に関するお問い合わせですね。\n` : ''}
+${jobTitle ? `【${jobTitle}】へのご応募に関するお問い合わせですね。\n` : ""}
 【お問い合わせ内容】
 ${inquiryContent}
 
@@ -291,10 +329,10 @@ ${inquiryContent}
    */
   async generateImage(params: {
     prompt: string;
-    aspectRatio?: '1:1' | '3:4' | '4:3' | '9:16' | '16:9';
-    imageSize?: '1K' | '2K' | '4K';
+    aspectRatio?: "1:1" | "3:4" | "4:3" | "9:16" | "16:9";
+    imageSize?: "1K" | "2K" | "4K";
   }): Promise<{ imageData: string; mimeType: string }> {
-    const { prompt, aspectRatio = '1:1', imageSize = '1K' } = params;
+    const { prompt, aspectRatio = "1:1", imageSize = "1K" } = params;
 
     // API Keyが設定されていない場合はモック
     if (!process.env.GEMINI_API_KEY) {
@@ -308,19 +346,19 @@ ${inquiryContent}
       const requestBody = {
         contents: [
           {
-            role: 'user',
+            role: "user",
             parts: [{ text: prompt }],
           },
         ],
         generationConfig: {
-          responseMimeType: 'image/png',
+          responseMimeType: "image/png",
         },
       };
 
       const response = await fetch(apiUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
       });
@@ -338,15 +376,15 @@ ${inquiryContent}
           if (part.inlineData) {
             return {
               imageData: part.inlineData.data,
-              mimeType: part.inlineData.mimeType || 'image/png',
+              mimeType: part.inlineData.mimeType || "image/png",
             };
           }
         }
       }
 
-      throw new Error('No image data in response');
+      throw new Error("No image data in response");
     } catch (error) {
-      console.error('Gemini API error:', error);
+      console.error("Gemini API error:", error);
       throw new Error(`Failed to generate image: ${error.message}`);
     }
   }
@@ -354,12 +392,13 @@ ${inquiryContent}
   /**
    * モック: 画像生成
    */
-  private generateMockImage(params: {
-    prompt: string;
-  }): { imageData: string; mimeType: string } {
+  private generateMockImage(params: { prompt: string }): {
+    imageData: string;
+    mimeType: string;
+  } {
     // 1x1 透明PNG画像のbase64データ（モック）
     const mockImageData =
-      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
 
     console.log(
       `🖼️ Mock image generation (GEMINI_API_KEY not set): ${params.prompt}`,
@@ -367,7 +406,7 @@ ${inquiryContent}
 
     return {
       imageData: mockImageData,
-      mimeType: 'image/png',
+      mimeType: "image/png",
     };
   }
 }

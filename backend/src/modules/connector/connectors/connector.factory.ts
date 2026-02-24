@@ -1,15 +1,15 @@
-import { BaseConnector } from './base.connector';
-import { IndeedConnector } from './indeed.connector';
-import { KyujinBoxConnector } from './kyujin-box.connector';
+import { BaseConnector } from "./base.connector";
+import { IndeedConnector } from "./indeed.connector";
+import { KyujinBoxConnector } from "./kyujin-box.connector";
 
 export class ConnectorFactory {
   static create(type: string, config: Record<string, any>): BaseConnector {
     switch (type) {
-      case 'indeed':
+      case "indeed":
         return new IndeedConnector(config);
-      case 'kyujin-box':
+      case "kyujin-box":
         return new KyujinBoxConnector(config);
-      case 'dummy':
+      case "dummy":
         // ダミーコネクタ（モック）
         return new DummyConnector(config);
       default:
@@ -23,7 +23,7 @@ export class ConnectorFactory {
  */
 class DummyConnector extends BaseConnector {
   async publish(jobData: any) {
-    console.log('📝 Dummy connector: publish', jobData.title);
+    console.log("📝 Dummy connector: publish", jobData.title);
     return {
       success: true,
       externalId: `dummy-${Date.now()}`,
@@ -31,7 +31,7 @@ class DummyConnector extends BaseConnector {
   }
 
   async update(externalId: string, jobData: any) {
-    console.log('📝 Dummy connector: update', externalId, jobData.title);
+    console.log("📝 Dummy connector: update", externalId, jobData.title);
     return {
       success: true,
       externalId,
@@ -39,7 +39,7 @@ class DummyConnector extends BaseConnector {
   }
 
   async stop(externalId: string) {
-    console.log('📝 Dummy connector: stop', externalId);
+    console.log("📝 Dummy connector: stop", externalId);
     return {
       success: true,
       externalId,
@@ -47,7 +47,16 @@ class DummyConnector extends BaseConnector {
   }
 
   async testConnection() {
-    console.log('📝 Dummy connector: test connection');
+    console.log("📝 Dummy connector: test connection");
     return true;
+  }
+
+  async replyToInquiry(externalInquiryId: string, message: string) {
+    console.log(
+      "📝 Dummy connector: replyToInquiry",
+      externalInquiryId,
+      message,
+    );
+    return { success: true };
   }
 }

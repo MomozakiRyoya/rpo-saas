@@ -2,7 +2,8 @@ import {
   BaseConnector,
   JobData,
   PublicationResult,
-} from './base.connector';
+  ReplyResult,
+} from "./base.connector";
 
 /**
  * Indeed コネクタ
@@ -21,29 +22,32 @@ export class IndeedConnector extends BaseConnector {
     if (!apiKey || !publisherId) {
       return {
         success: false,
-        error: 'Indeed API認証情報が設定されていません',
+        error: "Indeed API認証情報が設定されていません",
       };
     }
 
     try {
       // Indeed API へのPOSTリクエスト（簡略版）
       // 実際のAPIエンドポイントは仕様に応じて変更してください
-      const response = await fetch(`${apiUrl || 'https://api.indeed.com/v1'}/jobs`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
+      const response = await fetch(
+        `${apiUrl || "https://api.indeed.com/v1"}/jobs`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            publisher_id: publisherId,
+            title: jobData.title,
+            description: jobData.description,
+            location: jobData.location,
+            salary: jobData.salary,
+            job_type: jobData.employmentType,
+            requirements: jobData.requirements,
+          }),
         },
-        body: JSON.stringify({
-          publisher_id: publisherId,
-          title: jobData.title,
-          description: jobData.description,
-          location: jobData.location,
-          salary: jobData.salary,
-          job_type: jobData.employmentType,
-          requirements: jobData.requirements,
-        }),
-      });
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -62,7 +66,7 @@ export class IndeedConnector extends BaseConnector {
         externalId,
       };
     } catch (error) {
-      console.error('Indeed API error:', error);
+      console.error("Indeed API error:", error);
       return {
         success: false,
         error: error.message,
@@ -78,12 +82,12 @@ export class IndeedConnector extends BaseConnector {
 
     try {
       const response = await fetch(
-        `${apiUrl || 'https://api.indeed.com/v1'}/jobs/${externalId}`,
+        `${apiUrl || "https://api.indeed.com/v1"}/jobs/${externalId}`,
         {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
           },
           body: JSON.stringify({
             title: jobData.title,
@@ -110,7 +114,7 @@ export class IndeedConnector extends BaseConnector {
         externalId,
       };
     } catch (error) {
-      console.error('Indeed update error:', error);
+      console.error("Indeed update error:", error);
       return {
         success: false,
         error: error.message,
@@ -123,11 +127,11 @@ export class IndeedConnector extends BaseConnector {
 
     try {
       const response = await fetch(
-        `${apiUrl || 'https://api.indeed.com/v1'}/jobs/${externalId}`,
+        `${apiUrl || "https://api.indeed.com/v1"}/jobs/${externalId}`,
         {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            'Authorization': `Bearer ${apiKey}`,
+            Authorization: `Bearer ${apiKey}`,
           },
         },
       );
@@ -146,7 +150,7 @@ export class IndeedConnector extends BaseConnector {
         externalId,
       };
     } catch (error) {
-      console.error('Indeed stop error:', error);
+      console.error("Indeed stop error:", error);
       return {
         success: false,
         error: error.message,
@@ -164,19 +168,50 @@ export class IndeedConnector extends BaseConnector {
     try {
       // 接続テスト（例: API キーの検証）
       const response = await fetch(
-        `${apiUrl || 'https://api.indeed.com/v1'}/auth/verify`,
+        `${apiUrl || "https://api.indeed.com/v1"}/auth/verify`,
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Authorization': `Bearer ${apiKey}`,
+            Authorization: `Bearer ${apiKey}`,
           },
         },
       );
 
       return response.ok;
     } catch (error) {
-      console.error('Indeed connection test failed:', error);
+      console.error("Indeed connection test failed:", error);
       return false;
+    }
+  }
+
+  async replyToInquiry(
+    externalInquiryId: string,
+    message: string,
+  ): Promise<ReplyResult> {
+    const { apiKey, apiUrl } = this.config;
+    if (!apiKey)
+      return { success: false, error: "Indeed API key not configured" };
+    try {
+      const response = await fetch(
+        `${apiUrl || "https://api.indeed.com/v1"}/inquiries/${externalInquiryId}/reply`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({ message }),
+        },
+      );
+      if (!response.ok) {
+        return {
+          success: false,
+          error: `Indeed API error: ${response.status}`,
+        };
+      }
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
   }
 }

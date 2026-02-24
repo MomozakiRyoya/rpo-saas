@@ -5,6 +5,9 @@ import {
   Approval,
   Publication,
   PaginatedResponse,
+  Candidate,
+  InterviewLog,
+  Resume,
 } from "@/types";
 
 // 顧客管理
@@ -212,8 +215,8 @@ export const publicationService = {
 
 // 問い合わせ管理
 export const inquiryService = {
-  async getAll() {
-    const response = await api.get("/api/inquiries");
+  async getAll(params?: { source?: string; status?: string }): Promise<any[]> {
+    const response = await api.get("/api/inquiries", { params });
     return response.data;
   },
 
@@ -232,6 +235,10 @@ export const inquiryService = {
       responseId,
     });
     return response.data;
+  },
+
+  async assignCandidate(id: string, candidateId: string): Promise<void> {
+    await api.patch(`/api/inquiries/${id}/assign-candidate`, { candidateId });
   },
 };
 
@@ -254,6 +261,95 @@ export const scheduleService = {
   async confirm(id: string, slotId: string) {
     const response = await api.post(`/api/schedules/${id}/confirm`, { slotId });
     return response.data;
+  },
+};
+
+// 候補者管理
+export const candidateService = {
+  async getAll(): Promise<Candidate[]> {
+    const res = await api.get<Candidate[]>("/api/candidates");
+    return res.data;
+  },
+
+  async getOne(id: string): Promise<Candidate> {
+    const res = await api.get<Candidate>(`/api/candidates/${id}`);
+    return res.data;
+  },
+
+  async create(data: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    notes?: string;
+  }): Promise<Candidate> {
+    const res = await api.post<Candidate>("/api/candidates", data);
+    return res.data;
+  },
+
+  async update(id: string, data: Partial<Candidate>): Promise<Candidate> {
+    const res = await api.patch<Candidate>(`/api/candidates/${id}`, data);
+    return res.data;
+  },
+
+  async delete(id: string): Promise<void> {
+    await api.delete(`/api/candidates/${id}`);
+  },
+};
+
+// 面談ログ
+export const interviewService = {
+  async getAll(candidateId?: string): Promise<InterviewLog[]> {
+    const res = await api.get<InterviewLog[]>("/api/interviews", {
+      params: candidateId ? { candidateId } : {},
+    });
+    return res.data;
+  },
+
+  async create(data: {
+    candidateId: string;
+    jobId?: string;
+    scheduledAt: string;
+    type: string;
+    result?: string;
+    notes?: string;
+    interviewerId?: string;
+  }): Promise<InterviewLog> {
+    const res = await api.post<InterviewLog>("/api/interviews", data);
+    return res.data;
+  },
+
+  async update(
+    id: string,
+    data: { result?: string; notes?: string },
+  ): Promise<InterviewLog> {
+    const res = await api.patch<InterviewLog>(`/api/interviews/${id}`, data);
+    return res.data;
+  },
+
+  async delete(id: string): Promise<void> {
+    await api.delete(`/api/interviews/${id}`);
+  },
+};
+
+// 職務経歴書
+export const resumeService = {
+  async getAll(candidateId: string): Promise<Resume[]> {
+    const res = await api.get<Resume[]>("/api/resumes", {
+      params: { candidateId },
+    });
+    return res.data;
+  },
+
+  async generate(candidateId: string): Promise<Resume> {
+    const res = await api.post<Resume>("/api/resumes/generate", {
+      candidateId,
+    });
+    return res.data;
+  },
+
+  async update(id: string, content: string): Promise<Resume> {
+    const res = await api.patch<Resume>(`/api/resumes/${id}`, { content });
+    return res.data;
   },
 };
 

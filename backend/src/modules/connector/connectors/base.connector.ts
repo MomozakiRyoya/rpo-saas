@@ -16,6 +16,19 @@ export interface PublicationResult {
   error?: string;
 }
 
+export interface InquiryData {
+  externalId: string;
+  applicantName?: string;
+  applicantEmail?: string;
+  content: string;
+  createdAt?: Date;
+}
+
+export interface ReplyResult {
+  success: boolean;
+  error?: string;
+}
+
 export abstract class BaseConnector {
   protected config: Record<string, any>;
 
@@ -45,4 +58,24 @@ export abstract class BaseConnector {
    * 接続テスト
    */
   abstract testConnection(): Promise<boolean>;
+
+  /**
+   * 問い合わせに返信（オプション）
+   */
+  async replyToInquiry(
+    externalInquiryId: string,
+    message: string,
+  ): Promise<ReplyResult> {
+    return {
+      success: false,
+      error: "This connector does not support direct replies",
+    };
+  }
+
+  /**
+   * 問い合わせ一覧を取得（オプション）
+   */
+  async fetchInquiries(externalJobId: string): Promise<InquiryData[]> {
+    return [];
+  }
 }

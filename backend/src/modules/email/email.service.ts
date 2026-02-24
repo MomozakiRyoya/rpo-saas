@@ -279,6 +279,182 @@ ${slotsHtml}
   }
 
   /**
+   * 掲載エラーアラートメールを送信
+   */
+  async sendPublicationFailureAlert(params: {
+    to: string;
+    jobTitle: string;
+    connectorName: string;
+    errorMessage: string;
+  }): Promise<{ success: boolean; messageId?: string }> {
+    const { to, jobTitle, connectorName, errorMessage } = params;
+
+    const subject = `【掲載エラー】${jobTitle} - ${connectorName}`;
+
+    const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background-color: #EF4444; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background-color: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #6b7280; }
+    .error-box { background-color: #fee2e2; padding: 15px; border-left: 4px solid #EF4444; margin: 20px 0; font-family: monospace; font-size: 13px; word-break: break-all; }
+    .info { background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>掲載エラーが発生しました</h2>
+    </div>
+    <div class="content">
+      <p>以下の求人の掲載処理中にエラーが発生しました。</p>
+      <div class="info">
+        <p><strong>求人タイトル:</strong> ${jobTitle}</p>
+        <p><strong>掲載先:</strong> ${connectorName}</p>
+      </div>
+      <div class="error-box">
+        <strong>エラー内容:</strong><br>
+        ${errorMessage}
+      </div>
+      <p>内容を確認し、必要に応じて再掲載をお試しください。</p>
+    </div>
+    <div class="footer">
+      <p>このメールは自動送信されています。</p>
+    </div>
+  </div>
+</body>
+</html>
+    `;
+
+    return this.sendEmail({ to, subject, html: htmlContent });
+  }
+
+  /**
+   * 問い合わせ受信通知メールを送信
+   */
+  async sendInquiryReceivedNotification(params: {
+    to: string;
+    jobTitle?: string;
+    inquiryContent: string;
+  }): Promise<{ success: boolean; messageId?: string }> {
+    const { to, jobTitle, inquiryContent } = params;
+
+    const subject = "新しいお問い合わせが届きました";
+
+    const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background-color: #3B82F6; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background-color: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #6b7280; }
+    .inquiry-box { background-color: white; padding: 20px; border-left: 4px solid #3B82F6; margin: 20px 0; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>新しいお問い合わせ</h2>
+    </div>
+    <div class="content">
+      <p>新しいお問い合わせが届きました。</p>
+      ${jobTitle ? `<p><strong>関連求人:</strong> ${jobTitle}</p>` : ""}
+      <div class="inquiry-box">
+        <strong>お問い合わせ内容:</strong><br>
+        ${inquiryContent}
+      </div>
+      <p>管理画面からご確認・返信をお願いいたします。</p>
+    </div>
+    <div class="footer">
+      <p>このメールは自動送信されています。</p>
+    </div>
+  </div>
+</body>
+</html>
+    `;
+
+    return this.sendEmail({ to, subject, html: htmlContent });
+  }
+
+  /**
+   * 面接日程確定通知メールを送信
+   */
+  async sendScheduleConfirmed(params: {
+    to: string;
+    recipientName: string;
+    candidateName: string;
+    confirmedSlot: Date;
+    isCandidate: boolean;
+  }): Promise<{ success: boolean; messageId?: string }> {
+    const { to, recipientName, candidateName, confirmedSlot, isCandidate } =
+      params;
+
+    const subject = `【面接日程確定】${candidateName}様`;
+
+    const formattedDate = confirmedSlot.toLocaleString("ja-JP", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    const messageBody = isCandidate
+      ? `面接日程が以下の通り確定いたしました。`
+      : `${candidateName}様との面接日程が以下の通り確定いたしました。`;
+
+    const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background-color: #10B981; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background-color: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #6b7280; }
+    .schedule-box { background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center; }
+    .date-text { font-size: 22px; font-weight: bold; color: #10B981; margin: 10px 0; }
+    .candidate-name { font-size: 16px; color: #374151; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>面接日程確定のお知らせ</h2>
+    </div>
+    <div class="content">
+      <p>${recipientName}様</p>
+      <p>${messageBody}</p>
+      <div class="schedule-box">
+        <div class="candidate-name">候補者: ${candidateName}様</div>
+        <div class="date-text">${formattedDate}</div>
+      </div>
+      <p>よろしくお願いいたします。</p>
+    </div>
+    <div class="footer">
+      <p>このメールは自動送信されています。</p>
+    </div>
+  </div>
+</body>
+</html>
+    `;
+
+    return this.sendEmail({ to, subject, html: htmlContent });
+  }
+
+  /**
    * 汎用メール送信
    */
   private async sendEmail(params: {

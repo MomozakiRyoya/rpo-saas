@@ -120,6 +120,34 @@ export interface Publication {
   stoppedAt?: string;
 }
 
+export interface Inquiry {
+  id: string;
+  content: string;
+  applicantName?: string;
+  applicantEmail?: string;
+  category?: string;
+  status: string;
+  source?: string;
+  externalId?: string;
+  candidateId?: string;
+  candidate?: Pick<Candidate, "id" | "name" | "email">;
+  publication?: {
+    id: string;
+    connector: { id: string; name: string; type: string };
+  };
+  createdAt: string;
+  job?: {
+    id: string;
+    title: string;
+  };
+  responses?: Array<{
+    id: string;
+    content: string;
+    isSent?: boolean;
+    sentAt?: string;
+  }>;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   meta: {
@@ -128,4 +156,45 @@ export interface PaginatedResponse<T> {
     limit: number;
     totalPages: number;
   };
+}
+
+export interface Candidate {
+  id: string;
+  tenantId: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+  inquiries?: Inquiry[];
+  interviews?: InterviewLog[];
+  resumes?: Resume[];
+  _count?: { inquiries: number; interviews: number; resumes: number };
+}
+
+export interface InterviewLog {
+  id: string;
+  candidateId: string;
+  candidate?: Pick<Candidate, "id" | "name" | "email">;
+  jobId?: string;
+  job?: { id: string; title: string };
+  scheduledAt: string;
+  type: "phone" | "video" | "onsite";
+  result: "pass" | "fail" | "pending";
+  notes?: string;
+  interviewerId?: string;
+  interviewer?: { id: string; name: string };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Resume {
+  id: string;
+  candidateId: string;
+  content: string;
+  version: number;
+  tenantId: string;
+  createdAt: string;
+  updatedAt: string;
 }
