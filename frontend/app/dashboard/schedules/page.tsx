@@ -108,11 +108,11 @@ export default function SchedulesPage() {
       days.push(
         <div
           key={day}
-          className={`border border-gray-200 p-2 min-h-[100px] transition-all hover:bg-gray-50 ${
-            isToday ? 'bg-blue-50 border-blue-300' : 'bg-white'
+          className={`border border-gray-100 p-2 min-h-[100px] transition-all hover:bg-gray-50 ${
+            isToday ? 'bg-indigo-50 border-indigo-300' : 'bg-white'
           }`}
         >
-          <div className={`text-sm font-semibold mb-2 ${isToday ? 'text-blue-600' : 'text-gray-700'}`}>
+          <div className={`text-sm font-semibold mb-2 ${isToday ? 'text-indigo-600' : 'text-gray-700'}`}>
             {day}
           </div>
           <div className="space-y-1">
@@ -120,10 +120,10 @@ export default function SchedulesPage() {
               <button
                 key={event.id}
                 onClick={() => setSelectedEvent(event)}
-                className={`w-full text-left px-2 py-1 rounded text-xs font-medium transition-all hover:shadow-md ${
+                className={`w-full text-left px-2 py-1 rounded text-xs font-medium transition-all hover:shadow-sm ${
                   event.status === 'CONFIRMED'
-                    ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                    : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                    ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                    : 'bg-amber-100 text-amber-800 hover:bg-amber-200'
                 }`}
               >
                 {new Date(event.date).toLocaleTimeString('ja-JP', {
@@ -142,37 +142,55 @@ export default function SchedulesPage() {
 
   return (
     <div className="px-4 sm:px-0">
+      {/* ページタイトル */}
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">日程調整カレンダー</h1>
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-500">
-            <span className="inline-block w-3 h-3 bg-green-100 rounded mr-1"></span>
+        <div>
+          <h2 className="text-xl font-bold text-gray-900">日程調整カレンダー</h2>
+          <p className="mt-1 text-sm text-gray-500">面接・面談のスケジュールを管理します</p>
+        </div>
+        <div className="flex items-center space-x-3">
+          <span className="inline-flex items-center text-sm text-gray-500">
+            <span className="inline-block w-3 h-3 bg-emerald-100 rounded mr-1.5 border border-emerald-200"></span>
             確定
           </span>
-          <span className="text-sm text-gray-500">
-            <span className="inline-block w-3 h-3 bg-yellow-100 rounded mr-1"></span>
+          <span className="inline-flex items-center text-sm text-gray-500">
+            <span className="inline-block w-3 h-3 bg-amber-100 rounded mr-1.5 border border-amber-200"></span>
             調整中
           </span>
         </div>
       </div>
 
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      {/* カレンダーカード */}
+      <div
+        className="bg-white border border-gray-100 rounded-2xl overflow-hidden"
+        style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+      >
         {/* カレンダーヘッダー */}
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4 flex items-center justify-between">
+        <div className="bg-indigo-600 px-5 py-4 flex items-center justify-between rounded-t-2xl">
           <button
             onClick={prevMonth}
-            className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
+            className="text-white hover:bg-white/20 rounded-xl p-2 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h2 className="text-xl font-bold text-white">
-            {currentDate.getFullYear()}年 {monthNames[currentDate.getMonth()]}
-          </h2>
+          <div className="flex items-center space-x-3">
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h2 className="text-lg font-bold text-white">
+              {currentDate.getFullYear()}年 {monthNames[currentDate.getMonth()]}
+            </h2>
+          </div>
           <button
             onClick={nextMonth}
-            className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
+            className="text-white hover:bg-white/20 rounded-xl p-2 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -181,12 +199,12 @@ export default function SchedulesPage() {
         </div>
 
         {/* 曜日ヘッダー */}
-        <div className="grid grid-cols-7 bg-gray-100">
+        <div className="grid grid-cols-7 bg-gray-50 text-gray-500">
           {dayNames.map((day, index) => (
             <div
               key={day}
               className={`text-center py-3 text-sm font-semibold ${
-                index === 0 ? 'text-red-600' : index === 6 ? 'text-blue-600' : 'text-gray-700'
+                index === 0 ? 'text-rose-500' : index === 6 ? 'text-indigo-500' : 'text-gray-500'
               }`}
             >
               {day}
@@ -203,30 +221,43 @@ export default function SchedulesPage() {
       {/* イベント詳細モーダル */}
       {selectedEvent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 animate-fade-in">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900">面接予定</h3>
+          <div
+            className="bg-white rounded-2xl max-w-md w-full p-6"
+            style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+          >
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center space-x-3">
+                <div
+                  className="w-9 h-9 rounded-xl flex items-center justify-center"
+                  style={{ backgroundColor: '#EEF2FF', color: '#4F46E5' }}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-base font-bold text-gray-900">面接予定</h3>
+              </div>
               <button
                 onClick={() => setSelectedEvent(null)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700">候補者名</label>
-                <p className="mt-1 text-gray-900">{selectedEvent.candidateName}</p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">候補者名</label>
+                <p className="text-sm text-gray-900">{selectedEvent.candidateName}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">メールアドレス</label>
-                <p className="mt-1 text-gray-900">{selectedEvent.candidateEmail}</p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">メールアドレス</label>
+                <p className="text-sm text-gray-900">{selectedEvent.candidateEmail}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">日時</label>
-                <p className="mt-1 text-gray-900">
+                <label className="block text-sm font-medium text-gray-700 mb-1">日時</label>
+                <p className="text-sm text-gray-900">
                   {new Date(selectedEvent.date).toLocaleString('ja-JP', {
                     year: 'numeric',
                     month: 'long',
@@ -237,27 +268,27 @@ export default function SchedulesPage() {
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">所要時間</label>
-                <p className="mt-1 text-gray-900">{selectedEvent.duration}分</p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">所要時間</label>
+                <p className="text-sm text-gray-900">{selectedEvent.duration}分</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">ステータス</label>
-                <span className={`inline-flex mt-1 px-3 py-1 rounded-full text-sm font-medium ${
+                <label className="block text-sm font-medium text-gray-700 mb-1">ステータス</label>
+                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
                   selectedEvent.status === 'CONFIRMED'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-yellow-100 text-yellow-800'
+                    ? 'bg-emerald-100 text-emerald-700'
+                    : 'bg-amber-100 text-amber-700'
                 }`}>
                   {selectedEvent.status === 'CONFIRMED' ? '確定' : '調整中'}
                 </span>
               </div>
             </div>
             <div className="mt-6 flex gap-3">
-              <button className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
+              <button className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors">
                 Googleカレンダーで開く
               </button>
               <button
                 onClick={() => setSelectedEvent(null)}
-                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                className="bg-gray-100 text-gray-700 hover:bg-gray-200 text-sm font-medium px-4 py-2 rounded-xl transition-colors"
               >
                 閉じる
               </button>

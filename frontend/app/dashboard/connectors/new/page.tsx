@@ -127,20 +127,23 @@ export default function NewConnectorPage() {
     }
   };
 
+  const inputClass = 'w-full border border-gray-200 rounded-xl text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 transition-all';
+  const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
+
   const renderConfigFields = () => {
     switch (formData.type) {
       case 'indeed':
         return (
           <>
             <div>
-              <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700">
-                API Key <span className="text-red-500">*</span>
+              <label htmlFor="apiKey" className={labelClass}>
+                API Key <span className="text-rose-500">*</span>
               </label>
               <input
                 type="password"
                 id="apiKey"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 value={config.apiKey}
                 onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
               />
@@ -148,14 +151,14 @@ export default function NewConnectorPage() {
             </div>
 
             <div>
-              <label htmlFor="publisherId" className="block text-sm font-medium text-gray-700">
-                Publisher ID <span className="text-red-500">*</span>
+              <label htmlFor="publisherId" className={labelClass}>
+                Publisher ID <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 id="publisherId"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 value={config.publisherId}
                 onChange={(e) => setConfig({ ...config, publisherId: e.target.value })}
               />
@@ -163,13 +166,13 @@ export default function NewConnectorPage() {
             </div>
 
             <div>
-              <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="apiUrl" className={labelClass}>
                 API URL（オプション）
               </label>
               <input
                 type="text"
                 id="apiUrl"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 placeholder="https://api.indeed.com/v1"
                 value={config.apiUrl}
                 onChange={(e) => setConfig({ ...config, apiUrl: e.target.value })}
@@ -183,14 +186,14 @@ export default function NewConnectorPage() {
         return (
           <>
             <div>
-              <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700">
-                API Key <span className="text-red-500">*</span>
+              <label htmlFor="apiKey" className={labelClass}>
+                API Key <span className="text-rose-500">*</span>
               </label>
               <input
                 type="password"
                 id="apiKey"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 value={config.apiKey}
                 onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
               />
@@ -198,14 +201,14 @@ export default function NewConnectorPage() {
             </div>
 
             <div>
-              <label htmlFor="companyId" className="block text-sm font-medium text-gray-700">
-                Company ID <span className="text-red-500">*</span>
+              <label htmlFor="companyId" className={labelClass}>
+                Company ID <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 id="companyId"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 value={config.companyId}
                 onChange={(e) => setConfig({ ...config, companyId: e.target.value })}
               />
@@ -213,13 +216,13 @@ export default function NewConnectorPage() {
             </div>
 
             <div>
-              <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="apiUrl" className={labelClass}>
                 API URL（オプション）
               </label>
               <input
                 type="text"
                 id="apiUrl"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 placeholder="https://api.kyujinbox.com/v1"
                 value={config.apiUrl}
                 onChange={(e) => setConfig({ ...config, apiUrl: e.target.value })}
@@ -233,14 +236,14 @@ export default function NewConnectorPage() {
         return (
           <>
             <div>
-              <label htmlFor="clientId" className="block text-sm font-medium text-gray-700">
-                Client ID <span className="text-red-500">*</span>
+              <label htmlFor="clientId" className={labelClass}>
+                Client ID <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 id="clientId"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 value={config.clientId}
                 onChange={(e) => setConfig({ ...config, clientId: e.target.value })}
               />
@@ -248,14 +251,14 @@ export default function NewConnectorPage() {
             </div>
 
             <div>
-              <label htmlFor="clientSecret" className="block text-sm font-medium text-gray-700">
-                Client Secret <span className="text-red-500">*</span>
+              <label htmlFor="clientSecret" className={labelClass}>
+                Client Secret <span className="text-rose-500">*</span>
               </label>
               <input
                 type="password"
                 id="clientSecret"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 value={config.clientSecret}
                 onChange={(e) => setConfig({ ...config, clientSecret: e.target.value })}
               />
@@ -263,13 +266,13 @@ export default function NewConnectorPage() {
             </div>
 
             <div>
-              <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="apiUrl" className={labelClass}>
                 API URL（オプション）
               </label>
               <input
                 type="text"
                 id="apiUrl"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 placeholder="https://api.rikunabi.com/v1"
                 value={config.apiUrl}
                 onChange={(e) => setConfig({ ...config, apiUrl: e.target.value })}
@@ -283,14 +286,14 @@ export default function NewConnectorPage() {
         return (
           <>
             <div>
-              <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700">
-                API Key <span className="text-red-500">*</span>
+              <label htmlFor="apiKey" className={labelClass}>
+                API Key <span className="text-rose-500">*</span>
               </label>
               <input
                 type="password"
                 id="apiKey"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 value={config.apiKey}
                 onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
               />
@@ -298,14 +301,14 @@ export default function NewConnectorPage() {
             </div>
 
             <div>
-              <label htmlFor="accountId" className="block text-sm font-medium text-gray-700">
-                Account ID <span className="text-red-500">*</span>
+              <label htmlFor="accountId" className={labelClass}>
+                Account ID <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 id="accountId"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 value={config.accountId}
                 onChange={(e) => setConfig({ ...config, accountId: e.target.value })}
               />
@@ -313,13 +316,13 @@ export default function NewConnectorPage() {
             </div>
 
             <div>
-              <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="apiUrl" className={labelClass}>
                 API URL（オプション）
               </label>
               <input
                 type="text"
                 id="apiUrl"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 placeholder="https://api.mynavi.jp/v1"
                 value={config.apiUrl}
                 onChange={(e) => setConfig({ ...config, apiUrl: e.target.value })}
@@ -333,14 +336,14 @@ export default function NewConnectorPage() {
         return (
           <>
             <div>
-              <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700">
-                API Key <span className="text-red-500">*</span>
+              <label htmlFor="apiKey" className={labelClass}>
+                API Key <span className="text-rose-500">*</span>
               </label>
               <input
                 type="password"
                 id="apiKey"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 value={config.apiKey}
                 onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
               />
@@ -348,14 +351,14 @@ export default function NewConnectorPage() {
             </div>
 
             <div>
-              <label htmlFor="partnerId" className="block text-sm font-medium text-gray-700">
-                Partner ID <span className="text-red-500">*</span>
+              <label htmlFor="partnerId" className={labelClass}>
+                Partner ID <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 id="partnerId"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 value={config.partnerId}
                 onChange={(e) => setConfig({ ...config, partnerId: e.target.value })}
               />
@@ -363,13 +366,13 @@ export default function NewConnectorPage() {
             </div>
 
             <div>
-              <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="apiUrl" className={labelClass}>
                 API URL（オプション）
               </label>
               <input
                 type="text"
                 id="apiUrl"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
+                className={inputClass}
                 placeholder="https://api.doda.jp/v1"
                 value={config.apiUrl}
                 onChange={(e) => setConfig({ ...config, apiUrl: e.target.value })}
@@ -381,8 +384,8 @@ export default function NewConnectorPage() {
 
       case 'dummy':
         return (
-          <div className="rounded-md bg-blue-50 p-4">
-            <p className="text-sm text-blue-800">
+          <div className="rounded-xl bg-indigo-50 border border-indigo-100 p-4">
+            <p className="text-sm text-indigo-700">
               ダミーコネクタはテスト用です。実際の媒体APIへの連携は行われず、モックデータを返します。
             </p>
           </div>
@@ -395,127 +398,171 @@ export default function NewConnectorPage() {
 
   return (
     <div className="px-4 sm:px-0">
+      {/* 戻るリンク */}
       <div className="mb-6">
         <a
           href="/dashboard/connectors"
-          className="text-sm text-indigo-600 hover:text-indigo-900"
+          className="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
         >
-          ← コネクタ一覧に戻る
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          コネクタ一覧に戻る
         </a>
       </div>
 
-      <div className="sm:flex sm:items-center mb-6">
-        <div className="sm:flex-auto">
-          <h1 className="text-3xl font-bold text-gray-900">新規コネクタ作成</h1>
-          <p className="mt-2 text-sm text-gray-700">
-            求人媒体APIとの連携設定を追加します
-          </p>
-        </div>
+      {/* ページタイトル */}
+      <div className="mb-8">
+        <h2 className="text-xl font-bold text-gray-900">新規コネクタ作成</h2>
+        <p className="mt-1 text-sm text-gray-500">求人媒体APIとの連携設定を追加します</p>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-md bg-red-50 p-4">
-          <div className="text-sm text-red-800">{error}</div>
+        <div className="mb-6 bg-rose-50 border border-rose-200 rounded-xl p-4">
+          <div className="flex items-center">
+            <svg className="w-5 h-5 text-rose-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-sm text-rose-700">{error}</span>
+          </div>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            コネクタ名 <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            id="name"
-            required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="例: Indeed本番環境"
-          />
-          <p className="mt-1 text-xs text-gray-500">管理画面で表示される名前</p>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            媒体タイプを選択 <span className="text-red-500">*</span>
-          </label>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {connectorTypes.map((type) => (
-              <button
-                key={type.value}
-                type="button"
-                onClick={() => {
-                  setFormData({ ...formData, type: type.value });
-                  // リセット
-                  setConfig({
-                    apiKey: '',
-                    apiUrl: '',
-                    publisherId: '',
-                    companyId: '',
-                    clientId: '',
-                    clientSecret: '',
-                    accountId: '',
-                    partnerId: '',
-                  });
-                }}
-                className={`relative rounded-lg border-2 p-4 flex flex-col items-start hover:border-indigo-500 focus:outline-none transition-all ${
-                  formData.type === type.value
-                    ? 'border-indigo-600 bg-indigo-50'
-                    : 'border-gray-300 bg-white'
-                }`}
-              >
-                <div className="flex items-center space-x-3 w-full">
-                  <span className="text-2xl">{type.icon}</span>
-                  <div className="flex-1 text-left">
-                    <p className={`text-sm font-medium ${
-                      formData.type === type.value ? 'text-indigo-900' : 'text-gray-900'
-                    }`}>
-                      {type.label}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {type.description}
-                    </p>
-                  </div>
-                  {formData.type === type.value && (
-                    <svg className="h-5 w-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </div>
-              </button>
-            ))}
+        {/* コネクタ名 */}
+        <div
+          className="bg-white border border-gray-100 rounded-2xl overflow-hidden"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+        >
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center space-x-3">
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: '#FFFBEB', color: '#D97706' }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+            </div>
+            <h3 className="text-sm font-semibold text-gray-900">基本情報</h3>
+          </div>
+          <div className="p-5">
+            <label htmlFor="name" className={labelClass}>
+              コネクタ名 <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              required
+              className={inputClass}
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="例: Indeed本番環境"
+            />
+            <p className="mt-1 text-xs text-gray-500">管理画面で表示される名前</p>
           </div>
         </div>
 
-        <div className="border-t border-gray-200 pt-6">
-          <div className="flex items-start space-x-3 mb-4">
-            <svg className="h-6 w-6 text-indigo-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-            <div className="flex-1">
-              <h3 className="text-lg font-medium text-gray-900">API認証情報</h3>
-              <p className="text-sm text-gray-600 mt-1">
-                認証情報は暗号化して安全に保存されます
-              </p>
+        {/* 媒体タイプ選択 */}
+        <div
+          className="bg-white border border-gray-100 rounded-2xl overflow-hidden"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+        >
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center space-x-3">
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: '#FFFBEB', color: '#D97706' }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h3 className="text-sm font-semibold text-gray-900">媒体タイプを選択</h3>
+          </div>
+          <div className="p-5">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {connectorTypes.map((type) => (
+                <button
+                  key={type.value}
+                  type="button"
+                  onClick={() => {
+                    setFormData({ ...formData, type: type.value });
+                    setConfig({
+                      apiKey: '',
+                      apiUrl: '',
+                      publisherId: '',
+                      companyId: '',
+                      clientId: '',
+                      clientSecret: '',
+                      accountId: '',
+                      partnerId: '',
+                    });
+                  }}
+                  className={`relative rounded-xl p-4 flex flex-col items-start focus:outline-none transition-all ${
+                    formData.type === type.value
+                      ? 'border-2 border-indigo-500 bg-indigo-50 cursor-pointer'
+                      : 'border-2 border-gray-200 bg-white cursor-pointer hover:border-indigo-300'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3 w-full">
+                    <span className="text-2xl">{type.icon}</span>
+                    <div className="flex-1 text-left">
+                      <p className={`text-sm font-medium ${
+                        formData.type === type.value ? 'text-indigo-900' : 'text-gray-900'
+                      }`}>
+                        {type.label}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        {type.description}
+                      </p>
+                    </div>
+                    {formData.type === type.value && (
+                      <svg className="h-5 w-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
-          <div className="space-y-4">
+        </div>
+
+        {/* API認証情報 */}
+        <div
+          className="bg-white border border-gray-100 rounded-2xl overflow-hidden"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+        >
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center space-x-3">
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: '#FFFBEB', color: '#D97706' }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900">API認証情報</h3>
+              <p className="text-xs text-gray-500">認証情報は暗号化して安全に保存されます</p>
+            </div>
+          </div>
+          <div className="p-5 space-y-4">
             {renderConfigFields()}
           </div>
         </div>
 
-        <div className="flex gap-3 pt-4">
+        {/* 送信ボタン */}
+        <div className="flex gap-3 pt-2">
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-gray-400"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
           >
             {loading ? '作成中...' : 'コネクタを作成'}
           </button>
           <a
             href="/dashboard/connectors"
-            className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="bg-gray-100 text-gray-700 hover:bg-gray-200 text-sm font-medium px-4 py-2 rounded-xl transition-colors"
           >
             キャンセル
           </a>

@@ -2,9 +2,10 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'ADMIN' | 'MANAGER' | 'MEMBER';
+  role: "ADMIN" | "MANAGER" | "MEMBER" | "CUSTOMER";
   tenantId: string;
   tenantName: string;
+  customerId?: string | null;
 }
 
 export interface AuthResponse {
@@ -44,14 +45,14 @@ export interface Job {
 }
 
 export type JobStatus =
-  | 'DRAFT'
-  | 'GENERATED'
-  | 'PENDING_APPROVAL'
-  | 'APPROVED'
-  | 'PUBLISHING'
-  | 'PUBLISHED'
-  | 'PUBLISH_FAILED'
-  | 'STOPPED';
+  | "DRAFT"
+  | "GENERATED"
+  | "PENDING_APPROVAL"
+  | "APPROVED"
+  | "PUBLISHING"
+  | "PUBLISHED"
+  | "PUBLISH_FAILED"
+  | "STOPPED";
 
 export interface JobTextVersion {
   id: string;
@@ -76,7 +77,7 @@ export interface Approval {
   id: string;
   jobId: string;
   job?: Job;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: "PENDING" | "APPROVED" | "REJECTED";
   textVersion?: number;
   imageVersion?: number;
   requestedAt: string;
@@ -113,7 +114,7 @@ export interface Publication {
   jobId: string;
   connectorId: string;
   connector?: Connector;
-  status: 'PENDING' | 'PUBLISHING' | 'PUBLISHED' | 'FAILED' | 'STOPPED';
+  status: "PENDING" | "PUBLISHING" | "PUBLISHED" | "FAILED" | "STOPPED";
   externalId?: string;
   publishedAt?: string;
   stoppedAt?: string;

@@ -1,254 +1,426 @@
-'use client';
+"use client";
 
-import { useRouter, usePathname } from 'next/navigation';
-import { authService } from '@/lib/auth';
-import { useEffect, useState } from 'react';
-import { User } from '@/types';
+import { useRouter, usePathname } from "next/navigation";
+import { authService } from "@/lib/auth";
+import { useEffect, useState } from "react";
+import { User } from "@/types";
 
-export default function Navbar() {
+const NAV_SECTIONS = [
+  {
+    label: "メインメニュー",
+    items: [
+      {
+        href: "/dashboard",
+        label: "ホーム",
+        exact: true,
+        icon: (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
+          </svg>
+        ),
+      },
+      {
+        href: "/dashboard/customers",
+        label: "顧客企業",
+        icon: (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+        ),
+      },
+      {
+        href: "/dashboard/jobs",
+        label: "求人管理",
+        icon: (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+        ),
+      },
+      {
+        href: "/dashboard/approvals",
+        label: "承認フロー",
+        icon: (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        ),
+      },
+      {
+        href: "/dashboard/inquiries",
+        label: "問い合わせ",
+        icon: (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+            />
+          </svg>
+        ),
+      },
+      {
+        href: "/dashboard/schedules",
+        label: "日程調整",
+        icon: (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+        ),
+      },
+    ],
+  },
+  {
+    label: "レポート",
+    items: [
+      {
+        href: "/dashboard/analytics",
+        label: "分析・レポート",
+        icon: (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
+          </svg>
+        ),
+      },
+    ],
+  },
+  {
+    label: "設定",
+    items: [
+      {
+        href: "/dashboard/connectors",
+        label: "APIコネクタ",
+        icon: (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+        ),
+      },
+      {
+        href: "/dashboard/settings",
+        label: "システム設定",
+        icon: (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+        ),
+      },
+    ],
+  },
+];
+
+export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const currentUser = authService.getCurrentUser();
-    setUser(currentUser);
+    setUser(authService.getCurrentUser());
   }, []);
 
-  const isActive = (path: string) => {
-    if (path === '/dashboard') {
-      return pathname === path;
-    }
-    return pathname.startsWith(path);
-  };
-
-  const getLinkClass = (path: string) => {
-    return isActive(path)
-      ? 'relative px-3 py-2 text-sm font-bold text-blue-600 transition-colors after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gradient-to-r after:from-blue-600 after:to-cyan-600 after:rounded-full'
-      : 'px-3 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors';
+  const isActive = (href: string, exact?: boolean) => {
+    if (exact) return pathname === href;
+    return pathname.startsWith(href);
   };
 
   const handleLogout = () => {
     authService.logout();
-    router.push('/login');
+    router.push("/login");
   };
 
-  return (
-    <nav className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50 backdrop-blur-sm bg-white/95">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo Section */}
-          <div className="flex items-center">
-            <a href="/dashboard" className="flex items-center space-x-3 group">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition-opacity"></div>
-                <div className="relative bg-gradient-to-r from-blue-600 to-cyan-600 p-2 rounded-lg">
-                  <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-              </div>
-              <h1 className="text-xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                RPO-SaaS
-              </h1>
-            </a>
-
-            {/* Desktop Navigation Links */}
-            <div className="hidden lg:ml-8 lg:flex lg:space-x-1">
-              <a href="/dashboard" className={getLinkClass('/dashboard')}>
-                ホーム
-              </a>
-              <a href="/dashboard/customers" className={getLinkClass('/dashboard/customers')}>
-                顧客
-              </a>
-              <a href="/dashboard/jobs" className={getLinkClass('/dashboard/jobs')}>
-                求人
-              </a>
-              <a href="/dashboard/approvals" className={getLinkClass('/dashboard/approvals')}>
-                承認
-              </a>
-              <a href="/dashboard/inquiries" className={getLinkClass('/dashboard/inquiries')}>
-                問合せ
-              </a>
-              <a href="/dashboard/schedules" className={getLinkClass('/dashboard/schedules')}>
-                日程
-              </a>
-              <a href="/dashboard/analytics" className={getLinkClass('/dashboard/analytics')}>
-                分析
-              </a>
-              <a href="/dashboard/connectors" className={getLinkClass('/dashboard/connectors')}>
-                API
-              </a>
-              <a href="/dashboard/settings" className={getLinkClass('/dashboard/settings')}>
-                設定
-              </a>
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
+      {/* ワークスペースヘッダー */}
+      <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
+        <div className="flex items-center space-x-2 min-w-0">
+          <div className="w-7 h-7 bg-[#4A154B] rounded-lg flex items-center justify-center shrink-0 shadow-md">
+            <svg
+              className="w-4 h-4 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-gray-900 font-bold text-sm truncate leading-tight">
+              RPO-SaaS
+            </h1>
+            <div className="flex items-center space-x-1">
+              <span className="w-2 h-2 bg-green-500 rounded-full shrink-0"></span>
+              <span className="text-gray-500 text-xs truncate">
+                {user?.tenantName || "読み込み中..."}
+              </span>
             </div>
           </div>
-
-          {/* User Section */}
-          <div className="flex items-center space-x-4">
-            {user && (
-              <>
-                <div className="hidden md:flex items-center space-x-3">
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-slate-900">{user.name}</p>
-                    <p className="text-xs text-slate-500">{user.role}</p>
-                  </div>
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                    {user.name.charAt(0)}
-                  </div>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="hidden md:inline-flex items-center px-4 py-2 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:from-slate-200 hover:to-slate-300 transition-all shadow-sm hover:shadow"
-                >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  ログアウト
-                </button>
-              </>
-            )}
-
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-slate-600 hover:text-blue-600 hover:bg-slate-100 transition-colors"
-            >
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {mobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
         </div>
+        <button className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer shrink-0 p-1 hover:bg-gray-100 rounded">
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            />
+          </svg>
+        </button>
       </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-200 bg-white">
-          <div className="px-4 py-3 space-y-1">
-            <a
-              href="/dashboard"
-              className={`block px-3 py-2 rounded-lg text-sm font-medium ${
-                isActive('/dashboard')
-                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              ホーム
-            </a>
-            <a
-              href="/dashboard/customers"
-              className={`block px-3 py-2 rounded-lg text-sm font-medium ${
-                isActive('/dashboard/customers')
-                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              顧客
-            </a>
-            <a
-              href="/dashboard/jobs"
-              className={`block px-3 py-2 rounded-lg text-sm font-medium ${
-                isActive('/dashboard/jobs')
-                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              求人
-            </a>
-            <a
-              href="/dashboard/approvals"
-              className={`block px-3 py-2 rounded-lg text-sm font-medium ${
-                isActive('/dashboard/approvals')
-                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              承認待ち
-            </a>
-            <a
-              href="/dashboard/inquiries"
-              className={`block px-3 py-2 rounded-lg text-sm font-medium ${
-                isActive('/dashboard/inquiries')
-                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              問い合わせ
-            </a>
-            <a
-              href="/dashboard/schedules"
-              className={`block px-3 py-2 rounded-lg text-sm font-medium ${
-                isActive('/dashboard/schedules')
-                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              日程調整
-            </a>
-            <a
-              href="/dashboard/analytics"
-              className={`block px-3 py-2 rounded-lg text-sm font-medium ${
-                isActive('/dashboard/analytics')
-                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              分析
-            </a>
-            <a
-              href="/dashboard/connectors"
-              className={`block px-3 py-2 rounded-lg text-sm font-medium ${
-                isActive('/dashboard/connectors')
-                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              コネクタ設定
-            </a>
-            <a
-              href="/dashboard/settings"
-              className={`block px-3 py-2 rounded-lg text-sm font-medium ${
-                isActive('/dashboard/settings')
-                  ? 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600'
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              システム設定
-            </a>
+      {/* ナビゲーション */}
+      <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
+        {NAV_SECTIONS.map((section) => (
+          <div key={section.label}>
+            <p className="px-3 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-widest">
+              {section.label}
+            </p>
+            <ul className="space-y-0.5">
+              {section.items.map((item) => {
+                const active = isActive(item.href, item.exact);
+                return (
+                  <li key={item.href}>
+                    <a
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={`flex items-center space-x-2.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150 cursor-pointer ${
+                        active
+                          ? "bg-[#4A154B]/10 text-[#4A154B]"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      }`}
+                    >
+                      <span
+                        className={active ? "text-[#4A154B]" : "text-gray-400"}
+                      >
+                        {item.icon}
+                      </span>
+                      <span>{item.label}</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </nav>
 
-            {/* Mobile User Section */}
-            {user && (
-              <div className="pt-4 border-t border-slate-200 mt-4">
-                <div className="flex items-center space-x-3 px-3 py-2">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                    {user.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">{user.name}</p>
-                    <p className="text-xs text-slate-500">{user.role}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="w-full mt-2 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:from-slate-200 hover:to-slate-300 transition-all"
-                >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  ログアウト
-                </button>
-              </div>
-            )}
+      {/* ユーザーフッター */}
+      <div className="border-t border-gray-200 p-3">
+        <div className="flex items-center space-x-2 mb-2 px-2 py-1.5 rounded-md hover:bg-gray-100 cursor-pointer transition-colors">
+          <div className="w-8 h-8 bg-[#4A154B] rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0">
+            {user?.name?.charAt(0) ?? "?"}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-gray-900 text-sm font-semibold truncate leading-tight">
+              {user?.name}
+            </p>
+            <p className="text-gray-500 text-xs truncate">{user?.role}</p>
+          </div>
+          <div className="flex items-center space-x-1 shrink-0">
+            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
           </div>
         </div>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center space-x-2 px-3 py-1.5 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 text-sm transition-all duration-150 cursor-pointer"
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          <span>ログアウト</span>
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* デスクトップサイドバー */}
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 bg-white border-r border-gray-200 h-screen sticky top-0">
+        <SidebarContent />
+      </aside>
+
+      {/* モバイルヘッダー */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-sm">
+        <div className="flex items-center space-x-2">
+          <div className="w-7 h-7 bg-[#4A154B] rounded-lg flex items-center justify-center">
+            <svg
+              className="w-4 h-4 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <span className="text-gray-900 font-bold text-sm">RPO-SaaS</span>
+        </div>
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="text-gray-600 p-1.5 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+          aria-label="メニューを開く"
+        >
+          {mobileOpen ? (
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          ) : (
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* モバイルサイドバー（オーバーレイ） */}
+      {mobileOpen && (
+        <>
+          <div
+            className="lg:hidden fixed inset-0 z-40 bg-black/50"
+            onClick={() => setMobileOpen(false)}
+          />
+          <aside className="lg:hidden fixed top-0 left-0 bottom-0 z-50 w-64 bg-white border-r border-gray-200 flex flex-col shadow-2xl">
+            <SidebarContent />
+          </aside>
+        </>
       )}
-    </nav>
+    </>
   );
 }

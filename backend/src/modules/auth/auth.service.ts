@@ -1,8 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../../prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
-import { LoginDto, RegisterDto } from './dto/auth.dto';
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { PrismaService } from "../../prisma/prisma.service";
+import * as bcrypt from "bcrypt";
+import { LoginDto, RegisterDto } from "./dto/auth.dto";
 
 @Injectable()
 export class AuthService {
@@ -18,12 +18,15 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
-    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
     const payload = {
@@ -31,6 +34,7 @@ export class AuthService {
       email: user.email,
       tenantId: user.tenantId,
       role: user.role,
+      customerId: user.customerId,
     };
 
     const accessToken = this.jwtService.sign(payload);
@@ -44,8 +48,9 @@ export class AuthService {
         role: user.role,
         tenantId: user.tenantId,
         tenantName: user.tenant.name,
+        customerId: user.customerId,
       },
-      _codeVersion: '2026-02-16-17:30-BULLMQ-ENABLED',
+      _codeVersion: "2026-02-16-17:30-BULLMQ-ENABLED",
     };
   }
 
@@ -71,8 +76,9 @@ export class AuthService {
         email: registerDto.email,
         name: registerDto.name,
         password: hashedPassword,
-        role: registerDto.role || 'MEMBER',
+        role: registerDto.role || "MEMBER",
         tenantId: tenant.id,
+        customerId: registerDto.customerId || null,
       },
       include: { tenant: true },
     });
@@ -82,6 +88,7 @@ export class AuthService {
       email: user.email,
       tenantId: user.tenantId,
       role: user.role,
+      customerId: user.customerId,
     };
 
     const accessToken = this.jwtService.sign(payload);
@@ -95,6 +102,7 @@ export class AuthService {
         role: user.role,
         tenantId: user.tenantId,
         tenantName: user.tenant.name,
+        customerId: user.customerId,
       },
     };
   }
@@ -106,7 +114,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException("User not found");
     }
 
     return {
@@ -116,6 +124,7 @@ export class AuthService {
       role: user.role,
       tenantId: user.tenantId,
       tenantName: user.tenant.name,
+      customerId: user.customerId,
     };
   }
 }
