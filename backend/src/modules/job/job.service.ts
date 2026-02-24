@@ -5,6 +5,7 @@ import {
 } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
+import { EmailService } from "../email/email.service";
 import { CreateJobDto, UpdateJobDto } from "./dto/job.dto";
 
 @Injectable()
@@ -12,6 +13,7 @@ export class JobService {
   constructor(
     private prisma: PrismaService,
     private auditService: AuditService,
+    private emailService: EmailService,
   ) {}
 
   async findAll(
@@ -264,7 +266,35 @@ export class JobService {
       metadata: { approvalId: approval.id },
     });
 
+    // MANAGER/ADMIN ユーザーに承認依頼メールを送信（失敗しても処理継続）
+    this.notifyApprovers(tenantId, job.title).catch((err) =>
+      console.error("承認依頼メール送信エラー:", err),
+    );
+
     return approval;
+  }
+
+  // テナントの MANAGER/ADMIN 全員に承認依頼を通知
+  private async notifyApprovers(
+    tenantId: string,
+    jobTitle: string,
+  ): Promise<void> {
+    const approvers = await this.prisma.user.findMany({
+      where: { tenantId, role: { in: ["ADMIN", "MANAGER"] } },
+      select: { email: true, name: true },
+    });
+
+    await Promise.allSettled(
+      approvers.map((u) =>
+        this.emailService.sendApprovalNotification({
+          to: u.email,
+          userName: u.name,
+          jobTitle,
+          action: "approved", // テンプレート再利用（件名・本文をsubjectで区別）
+          comment: `求人「${jobTitle}」の承認依頼が届いています。管理画面からご確認ください。`,
+        }),
+      ),
+    );
   }
 
   async getTextVersions(id: string, tenantId: string) {

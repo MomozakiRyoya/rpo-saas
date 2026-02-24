@@ -1,14 +1,27 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "../../prisma/prisma.service";
+import { EmailService } from "../email/email.service";
 import * as bcrypt from "bcrypt";
+import * as crypto from "crypto";
 import { LoginDto, RegisterDto } from "./dto/auth.dto";
 
 @Injectable()
 export class AuthService {
+  // パスワードリセットトークンをメモリに保持 (token -> { userId, expiresAt })
+  private resetTokens = new Map<
+    string,
+    { userId: string; expiresAt: number }
+  >();
+
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private emailService: EmailService,
   ) {}
 
   async login(loginDto: LoginDto) {
@@ -105,6 +118,52 @@ export class AuthService {
         customerId: user.customerId,
       },
     };
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    // セキュリティのため、ユーザーが存在しない場合も成功扱い
+    if (!user) return;
+
+    // 期限切れトークンを削除してから新規発行
+    const now = Date.now();
+    for (const [token, data] of this.resetTokens.entries()) {
+      if (data.expiresAt <= now) this.resetTokens.delete(token);
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    this.resetTokens.set(token, {
+      userId: user.id,
+      expiresAt: now + 60 * 60 * 1000, // 1時間
+    });
+
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
+
+    await this.emailService.sendPasswordReset({
+      to: email,
+      userName: user.name,
+      resetUrl,
+    });
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const record = this.resetTokens.get(token);
+
+    if (!record || record.expiresAt <= Date.now()) {
+      throw new BadRequestException(
+        "無効または期限切れのリセットリンクです。再度お試しください。",
+      );
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: record.userId },
+      data: { password: hashed },
+    });
+
+    this.resetTokens.delete(token);
   }
 
   async getMe(userId: string) {

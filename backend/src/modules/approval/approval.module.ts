@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { ApprovalService } from './approval.service';
 import { ApprovalController } from './approval.controller';
 import { AuditModule } from '../audit/audit.module';
+import { EmailModule } from '../email/email.module';
 
 @Module({
-  imports: [AuditModule],
+  imports: [AuditModule, EmailModule],
   controllers: [ApprovalController],
   providers: [ApprovalService],
 })

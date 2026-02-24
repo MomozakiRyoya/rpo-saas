@@ -1,12 +1,18 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { AuditService } from '../audit/audit.service';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import { AuditService } from "../audit/audit.service";
+import { EmailService } from "../email/email.service";
 
 @Injectable()
 export class ApprovalService {
   constructor(
     private prisma: PrismaService,
     private auditService: AuditService,
+    private emailService: EmailService,
   ) {}
 
   async findAll(tenantId: string, page: number = 1, limit: number = 20) {
@@ -17,7 +23,7 @@ export class ApprovalService {
       where: { tenantId },
       select: { id: true },
     });
-    const customerIds = customers.map(c => c.id);
+    const customerIds = customers.map((c) => c.id);
 
     const [approvals, total] = await Promise.all([
       this.prisma.approval.findMany({
@@ -28,7 +34,7 @@ export class ApprovalService {
         },
         skip,
         take: limit,
-        orderBy: { requestedAt: 'desc' },
+        orderBy: { requestedAt: "desc" },
         include: {
           job: {
             include: {
@@ -86,19 +92,24 @@ export class ApprovalService {
               select: { id: true, name: true, email: true },
             },
           },
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
         },
       },
     });
 
     if (!approval) {
-      throw new NotFoundException('Approval not found');
+      throw new NotFoundException("Approval not found");
     }
 
     return approval;
   }
 
-  async approve(id: string, tenantId: string, userId: string, comment?: string) {
+  async approve(
+    id: string,
+    tenantId: string,
+    userId: string,
+    comment?: string,
+  ) {
     const approval = await this.prisma.approval.findFirst({
       where: {
         id,
@@ -112,11 +123,11 @@ export class ApprovalService {
     });
 
     if (!approval) {
-      throw new NotFoundException('Approval not found');
+      throw new NotFoundException("Approval not found");
     }
 
-    if (approval.status !== 'PENDING') {
-      throw new BadRequestException('Approval is not pending');
+    if (approval.status !== "PENDING") {
+      throw new BadRequestException("Approval is not pending");
     }
 
     // レビュー記録
@@ -124,7 +135,7 @@ export class ApprovalService {
       data: {
         approvalId: id,
         reviewerId: userId,
-        action: 'approve',
+        action: "approve",
         comment,
       },
     });
@@ -133,7 +144,7 @@ export class ApprovalService {
     await this.prisma.approval.update({
       where: { id },
       data: {
-        status: 'APPROVED',
+        status: "APPROVED",
         completedAt: new Date(),
       },
     });
@@ -141,20 +152,28 @@ export class ApprovalService {
     // 求人ステータス更新
     await this.prisma.job.update({
       where: { id: approval.jobId },
-      data: { status: 'APPROVED' },
+      data: { status: "APPROVED" },
     });
 
     // 監査ログ
     await this.auditService.log({
       tenantId,
       userId,
-      action: 'approve_job',
-      resource: 'approval',
+      action: "approve_job",
+      resource: "approval",
       resourceId: id,
       metadata: { jobId: approval.jobId, comment },
     });
 
-    return { message: 'Approval approved successfully' };
+    // 顧客ポータルユーザーにメール通知（失敗しても処理継続）
+    this.notifyCustomerUsers(
+      approval.job.customerId,
+      approval.job.title,
+      "approved",
+      comment,
+    ).catch((err) => console.error("承認通知メール送信エラー:", err));
+
+    return { message: "Approval approved successfully" };
   }
 
   async reject(id: string, tenantId: string, userId: string, comment: string) {
@@ -171,11 +190,11 @@ export class ApprovalService {
     });
 
     if (!approval) {
-      throw new NotFoundException('Approval not found');
+      throw new NotFoundException("Approval not found");
     }
 
-    if (approval.status !== 'PENDING') {
-      throw new BadRequestException('Approval is not pending');
+    if (approval.status !== "PENDING") {
+      throw new BadRequestException("Approval is not pending");
     }
 
     // レビュー記録
@@ -183,7 +202,7 @@ export class ApprovalService {
       data: {
         approvalId: id,
         reviewerId: userId,
-        action: 'reject',
+        action: "reject",
         comment,
       },
     });
@@ -192,7 +211,7 @@ export class ApprovalService {
     await this.prisma.approval.update({
       where: { id },
       data: {
-        status: 'REJECTED',
+        status: "REJECTED",
         completedAt: new Date(),
       },
     });
@@ -200,19 +219,52 @@ export class ApprovalService {
     // 求人ステータスを下書きに戻す
     await this.prisma.job.update({
       where: { id: approval.jobId },
-      data: { status: 'DRAFT' },
+      data: { status: "DRAFT" },
     });
 
     // 監査ログ
     await this.auditService.log({
       tenantId,
       userId,
-      action: 'reject_job',
-      resource: 'approval',
+      action: "reject_job",
+      resource: "approval",
       resourceId: id,
       metadata: { jobId: approval.jobId, comment },
     });
 
-    return { message: 'Approval rejected successfully' };
+    // 顧客ポータルユーザーにメール通知（失敗しても処理継続）
+    this.notifyCustomerUsers(
+      approval.job.customerId,
+      approval.job.title,
+      "rejected",
+      comment,
+    ).catch((err) => console.error("差し戻し通知メール送信エラー:", err));
+
+    return { message: "Approval rejected successfully" };
+  }
+
+  // 顧客に紐づくポータルユーザー全員にメール通知
+  private async notifyCustomerUsers(
+    customerId: string,
+    jobTitle: string,
+    action: "approved" | "rejected",
+    comment?: string,
+  ): Promise<void> {
+    const portalUsers = await this.prisma.user.findMany({
+      where: { customerId, role: "CUSTOMER" },
+      select: { email: true, name: true },
+    });
+
+    await Promise.allSettled(
+      portalUsers.map((u) =>
+        this.emailService.sendApprovalNotification({
+          to: u.email,
+          userName: u.name,
+          jobTitle,
+          action,
+          comment,
+        }),
+      ),
+    );
   }
 }
