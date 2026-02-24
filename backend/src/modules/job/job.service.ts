@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { AuditService } from '../audit/audit.service';
-import { CreateJobDto, UpdateJobDto } from './dto/job.dto';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import { AuditService } from "../audit/audit.service";
+import { CreateJobDto, UpdateJobDto } from "./dto/job.dto";
 
 @Injectable()
 export class JobService {
@@ -23,7 +27,7 @@ export class JobService {
       where: { tenantId },
       select: { id: true },
     });
-    const customerIds = customers.map(c => c.id);
+    const customerIds = customers.map((c) => c.id);
 
     const where: any = {
       customerId: { in: customerIds },
@@ -41,7 +45,7 @@ export class JobService {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         include: {
           customer: {
             select: { id: true, name: true },
@@ -71,15 +75,15 @@ export class JobService {
       include: {
         customer: true,
         textVersions: {
-          orderBy: { version: 'desc' },
+          orderBy: { version: "desc" },
           take: 5,
         },
         imageVersions: {
-          orderBy: { version: 'desc' },
+          orderBy: { version: "desc" },
           take: 5,
         },
         approvals: {
-          orderBy: { requestedAt: 'desc' },
+          orderBy: { requestedAt: "desc" },
           take: 5,
           include: {
             reviews: {
@@ -100,7 +104,7 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException("Job not found");
     }
 
     return job;
@@ -116,7 +120,7 @@ export class JobService {
     });
 
     if (!customer) {
-      throw new NotFoundException('Customer not found');
+      throw new NotFoundException("Customer not found");
     }
 
     const job = await this.prisma.job.create({
@@ -130,8 +134,8 @@ export class JobService {
     await this.auditService.log({
       tenantId,
       userId,
-      action: 'create_job',
-      resource: 'job',
+      action: "create_job",
+      resource: "job",
       resourceId: job.id,
       metadata: { jobTitle: job.title },
     });
@@ -139,7 +143,12 @@ export class JobService {
     return job;
   }
 
-  async update(id: string, tenantId: string, userId: string, updateJobDto: UpdateJobDto) {
+  async update(
+    id: string,
+    tenantId: string,
+    userId: string,
+    updateJobDto: UpdateJobDto,
+  ) {
     const job = await this.prisma.job.findFirst({
       where: {
         id,
@@ -148,7 +157,7 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException("Job not found");
     }
 
     const updated = await this.prisma.job.update({
@@ -163,8 +172,8 @@ export class JobService {
     await this.auditService.log({
       tenantId,
       userId,
-      action: 'update_job',
-      resource: 'job',
+      action: "update_job",
+      resource: "job",
       resourceId: id,
       metadata: { changes: updateJobDto },
     });
@@ -181,7 +190,7 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException("Job not found");
     }
 
     await this.prisma.job.delete({
@@ -192,13 +201,13 @@ export class JobService {
     await this.auditService.log({
       tenantId,
       userId,
-      action: 'delete_job',
-      resource: 'job',
+      action: "delete_job",
+      resource: "job",
       resourceId: id,
       metadata: { jobTitle: job.title },
     });
 
-    return { message: 'Job deleted successfully' };
+    return { message: "Job deleted successfully" };
   }
 
   async submitForApproval(id: string, tenantId: string, userId: string) {
@@ -209,29 +218,31 @@ export class JobService {
       },
       include: {
         textVersions: {
-          orderBy: { version: 'desc' },
+          orderBy: { version: "desc" },
           take: 1,
         },
         imageVersions: {
-          orderBy: { version: 'desc' },
+          orderBy: { version: "desc" },
           take: 1,
         },
       },
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException("Job not found");
     }
 
-    if (job.status !== 'DRAFT' && job.status !== 'GENERATED') {
-      throw new BadRequestException('Job is not in a state that can be submitted for approval');
+    if (job.status !== "DRAFT" && job.status !== "GENERATED") {
+      throw new BadRequestException(
+        "Job is not in a state that can be submitted for approval",
+      );
     }
 
     // 承認申請を作成
     const approval = await this.prisma.approval.create({
       data: {
         jobId: id,
-        status: 'PENDING',
+        status: "PENDING",
         textVersion: job.textVersions[0]?.version,
         imageVersion: job.imageVersions[0]?.version,
       },
@@ -240,15 +251,15 @@ export class JobService {
     // 求人ステータスを更新
     await this.prisma.job.update({
       where: { id },
-      data: { status: 'PENDING_APPROVAL' },
+      data: { status: "PENDING_APPROVAL" },
     });
 
     // 監査ログ
     await this.auditService.log({
       tenantId,
       userId,
-      action: 'submit_for_approval',
-      resource: 'job',
+      action: "submit_for_approval",
+      resource: "job",
       resourceId: id,
       metadata: { approvalId: approval.id },
     });
@@ -265,12 +276,12 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException("Job not found");
     }
 
     return this.prisma.jobTextVersion.findMany({
       where: { jobId: id },
-      orderBy: { version: 'desc' },
+      orderBy: { version: "desc" },
     });
   }
 
@@ -283,13 +294,86 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException("Job not found");
     }
 
     return this.prisma.jobImageVersion.findMany({
       where: { jobId: id },
-      orderBy: { version: 'desc' },
+      orderBy: { version: "desc" },
     });
+  }
+
+  async exportCsv(
+    tenantId: string,
+    filters: { status?: string; customerId?: string } = {},
+  ): Promise<string> {
+    const customers = await this.prisma.customer.findMany({
+      where: { tenantId },
+      select: { id: true },
+    });
+    const customerIds = customers.map((c) => c.id);
+
+    const where: any = { customerId: { in: customerIds } };
+    if (filters.status) where.status = filters.status;
+    if (filters.customerId) where.customerId = filters.customerId;
+
+    const jobs = await this.prisma.job.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      include: { customer: { select: { name: true } } },
+    });
+
+    const statusLabels: Record<string, string> = {
+      DRAFT: "下書き",
+      GENERATED: "生成完了",
+      PENDING_APPROVAL: "承認待ち",
+      APPROVED: "承認済み",
+      PUBLISHING: "掲載実行中",
+      PUBLISHED: "掲載中",
+      PUBLISH_FAILED: "更新失敗",
+      STOPPED: "掲載停止",
+    };
+
+    const escape = (val: string | null | undefined): string => {
+      if (val == null) return "";
+      const str = String(val).replace(/\r?\n/g, " ");
+      if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const headers = [
+      "ID",
+      "タイトル",
+      "顧客名",
+      "ステータス",
+      "勤務地",
+      "給与",
+      "雇用形態",
+      "業務内容",
+      "応募要件",
+      "作成日",
+      "更新日",
+    ];
+
+    const rows = jobs.map((job) =>
+      [
+        escape(job.id),
+        escape(job.title),
+        escape(job.customer?.name),
+        escape(statusLabels[job.status] ?? job.status),
+        escape(job.location),
+        escape(job.salary),
+        escape(job.employmentType),
+        escape(job.description),
+        escape(job.requirements),
+        escape(job.createdAt.toLocaleDateString("ja-JP")),
+        escape(job.updatedAt.toLocaleDateString("ja-JP")),
+      ].join(","),
+    );
+
+    return [headers.join(","), ...rows].join("\r\n");
   }
 
   async getDiff(id: string, tenantId: string, v1: number, v2: number) {
@@ -301,7 +385,7 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException("Job not found");
     }
 
     const [version1, version2] = await Promise.all([
@@ -314,7 +398,7 @@ export class JobService {
     ]);
 
     if (!version1 || !version2) {
-      throw new NotFoundException('Version not found');
+      throw new NotFoundException("Version not found");
     }
 
     // TODO: 差分計算ロジックを実装（簡易版としてそのまま返す）
