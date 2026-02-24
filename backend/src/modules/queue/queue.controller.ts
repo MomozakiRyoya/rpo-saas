@@ -1,24 +1,28 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { QueueService } from './queue.service';
 import { QueueName } from './types/job.types';
 
 @ApiTags('queue')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('queue')
 export class QueueController {
   constructor(private queueService: QueueService) {}
 
   @Get('stats')
-  @ApiOperation({ summary: 'すべてのキューの統計情報を取得' })
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'すべてのキューの統計情報を取得（ADMINのみ）' })
   async getQueueStats() {
     return this.queueService.getQueueStats();
   }
 
   @Get('job/:queueName/:jobId')
-  @ApiOperation({ summary: 'ジョブのステータスを取得' })
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'ジョブのステータスを取得（ADMINのみ）' })
   async getJobStatus(
     @Param('queueName') queueName: QueueName,
     @Param('jobId') jobId: string,

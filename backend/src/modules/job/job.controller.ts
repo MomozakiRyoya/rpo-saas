@@ -21,15 +21,18 @@ import {
 import { JobService } from "./job.service";
 import { CreateJobDto, UpdateJobDto } from "./dto/job.dto";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../../common/guards/roles.guard";
+import { Roles } from "../../common/decorators/roles.decorator";
 
 @ApiTags("jobs")
 @Controller("api/jobs")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class JobController {
   constructor(private jobService: JobService) {}
 
   @Get()
+  @Roles('MEMBER')
   @ApiOperation({ summary: "求人一覧取得" })
   @ApiQuery({ name: "status", required: false })
   @ApiQuery({ name: "customerId", required: false })
@@ -53,6 +56,7 @@ export class JobController {
   }
 
   @Get("export")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "求人CSVエクスポート" })
   @ApiQuery({ name: "status", required: false })
   @ApiQuery({ name: "customerId", required: false })
@@ -76,12 +80,14 @@ export class JobController {
   }
 
   @Get(":id")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "求人詳細取得" })
   async findOne(@Param("id") id: string, @Request() req) {
     return this.jobService.findOne(id, req.user.tenantId);
   }
 
   @Post()
+  @Roles('MEMBER')
   @ApiOperation({ summary: "求人作成" })
   async create(@Body() createJobDto: CreateJobDto, @Request() req) {
     return this.jobService.create(
@@ -92,6 +98,7 @@ export class JobController {
   }
 
   @Patch(":id")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "求人更新" })
   async update(
     @Param("id") id: string,
@@ -107,12 +114,14 @@ export class JobController {
   }
 
   @Delete(":id")
-  @ApiOperation({ summary: "求人削除" })
+  @Roles('MANAGER')
+  @ApiOperation({ summary: "求人削除（MANAGER以上）" })
   async delete(@Param("id") id: string, @Request() req) {
     return this.jobService.delete(id, req.user.tenantId, req.user.userId);
   }
 
   @Post(":id/submit-for-approval")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "承認申請" })
   async submitForApproval(@Param("id") id: string, @Request() req) {
     return this.jobService.submitForApproval(
@@ -123,18 +132,21 @@ export class JobController {
   }
 
   @Get(":id/text-versions")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "テキストバージョン履歴取得" })
   async getTextVersions(@Param("id") id: string, @Request() req) {
     return this.jobService.getTextVersions(id, req.user.tenantId);
   }
 
   @Get(":id/image-versions")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "画像バージョン履歴取得" })
   async getImageVersions(@Param("id") id: string, @Request() req) {
     return this.jobService.getImageVersions(id, req.user.tenantId);
   }
 
   @Get(":id/diff/:v1/:v2")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "バージョン差分取得" })
   async getDiff(
     @Param("id") id: string,

@@ -12,22 +12,26 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { WebhookService } from './webhook.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @ApiTags('webhooks')
 @Controller('api/webhooks')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class WebhookController {
   constructor(private webhookService: WebhookService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Webhookエンドポイント一覧取得' })
+  @Roles('MANAGER')
+  @ApiOperation({ summary: 'Webhookエンドポイント一覧取得（MANAGER以上）' })
   async findAll(@Request() req) {
     return this.webhookService.findAll(req.user.tenantId);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Webhookエンドポイント作成' })
+  @Roles('MANAGER')
+  @ApiOperation({ summary: 'Webhookエンドポイント作成（MANAGER以上）' })
   async create(
     @Body() body: { url: string; events: string[] },
     @Request() req,
@@ -36,7 +40,8 @@ export class WebhookController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Webhookエンドポイント更新' })
+  @Roles('MANAGER')
+  @ApiOperation({ summary: 'Webhookエンドポイント更新（MANAGER以上）' })
   async update(
     @Param('id') id: string,
     @Body() body: { url?: string; events?: string[]; isActive?: boolean },
@@ -46,13 +51,15 @@ export class WebhookController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Webhookエンドポイント削除' })
+  @Roles('MANAGER')
+  @ApiOperation({ summary: 'Webhookエンドポイント削除（MANAGER以上）' })
   async delete(@Param('id') id: string, @Request() req) {
     return this.webhookService.delete(id, req.user.tenantId);
   }
 
   @Get(':id/deliveries')
-  @ApiOperation({ summary: 'Webhook配信履歴取得' })
+  @Roles('MANAGER')
+  @ApiOperation({ summary: 'Webhook配信履歴取得（MANAGER以上）' })
   async getDeliveries(@Param('id') id: string, @Request() req) {
     return this.webhookService.getDeliveries(id, req.user.tenantId);
   }

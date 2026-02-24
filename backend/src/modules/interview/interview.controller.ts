@@ -10,44 +10,48 @@ import {
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiQuery,
+} from "@nestjs/swagger";
 import { InterviewService } from "./interview.service";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../../common/guards/roles.guard";
+import { Roles } from "../../common/decorators/roles.decorator";
 
 @ApiTags("interviews")
 @Controller("api/interviews")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class InterviewController {
   constructor(private interviewService: InterviewService) {}
 
   @Get()
+  @Roles("MEMBER")
   @ApiOperation({ summary: "面談ログ一覧" })
   @ApiQuery({ name: "candidateId", required: false })
-  async findAll(
-    @Request() req,
-    @Query("candidateId") candidateId?: string,
-  ) {
+  async findAll(@Request() req, @Query("candidateId") candidateId?: string) {
     return this.interviewService.findAll(req.user.tenantId, candidateId);
   }
 
   @Post()
+  @Roles("MEMBER")
   @ApiOperation({ summary: "面談ログ作成" })
   async create(@Body() body: any, @Request() req) {
     return this.interviewService.create(body, req.user.tenantId);
   }
 
   @Patch(":id")
+  @Roles("MEMBER")
   @ApiOperation({ summary: "面談ログ更新" })
-  async update(
-    @Param("id") id: string,
-    @Body() body: any,
-    @Request() req,
-  ) {
+  async update(@Param("id") id: string, @Body() body: any, @Request() req) {
     return this.interviewService.update(id, body, req.user.tenantId);
   }
 
   @Delete(":id")
+  @Roles("MEMBER")
   @ApiOperation({ summary: "面談ログ削除" })
   async delete(@Param("id") id: string, @Request() req) {
     return this.interviewService.delete(id, req.user.tenantId);

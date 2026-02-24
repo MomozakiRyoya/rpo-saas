@@ -2,15 +2,18 @@ import { Controller, Get, Post, Param, Body, Query, UseGuards, Request } from '@
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { ApprovalService } from './approval.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @ApiTags('approvals')
 @Controller('api/approvals')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class ApprovalController {
   constructor(private approvalService: ApprovalService) {}
 
   @Get()
+  @Roles('MEMBER')
   @ApiOperation({ summary: '承認待ち一覧取得' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -23,13 +26,15 @@ export class ApprovalController {
   }
 
   @Get(':id')
+  @Roles('MEMBER')
   @ApiOperation({ summary: '承認詳細取得' })
   async findOne(@Param('id') id: string, @Request() req) {
     return this.approvalService.findOne(id, req.user.tenantId);
   }
 
   @Post(':id/approve')
-  @ApiOperation({ summary: '承認実行' })
+  @Roles('MANAGER')
+  @ApiOperation({ summary: '承認実行（MANAGER以上）' })
   async approve(
     @Param('id') id: string,
     @Body() body: { comment?: string },
@@ -39,7 +44,8 @@ export class ApprovalController {
   }
 
   @Post(':id/reject')
-  @ApiOperation({ summary: '差戻し' })
+  @Roles('MANAGER')
+  @ApiOperation({ summary: '差戻し（MANAGER以上）' })
   async reject(
     @Param('id') id: string,
     @Body() body: { comment: string },

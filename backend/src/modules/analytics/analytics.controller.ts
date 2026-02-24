@@ -2,15 +2,18 @@ import { Controller, Get, Post, Query, UseGuards, Request } from '@nestjs/common
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AnalyticsService } from './analytics.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @ApiTags('analytics')
 @Controller('api/analytics')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class AnalyticsController {
   constructor(private analyticsService: AnalyticsService) {}
 
   @Get('daily')
+  @Roles('MEMBER')
   @ApiOperation({ summary: '日次指標取得' })
   @ApiQuery({ name: 'startDate', required: false })
   @ApiQuery({ name: 'endDate', required: false })
@@ -26,12 +29,14 @@ export class AnalyticsController {
   }
 
   @Get('summary')
+  @Roles('MEMBER')
   @ApiOperation({ summary: 'サマリー取得' })
   async getSummary(@Request() req) {
     return this.analyticsService.getSummary(req.user.tenantId);
   }
 
   @Post('collect')
+  @Roles('MEMBER')
   @ApiOperation({ summary: '日次メトリクス手動収集' })
   async collectMetrics() {
     await this.analyticsService.collectDailyMetrics();

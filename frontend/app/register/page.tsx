@@ -50,7 +50,7 @@ export default function RegisterPage() {
         password: form.password,
         tenantName: form.tenantName,
         tenantSlug: generateSlug(form.tenantName),
-        role: "ADMIN",
+        role: "MANAGER",
       });
       router.push("/dashboard");
     } catch (err: any) {

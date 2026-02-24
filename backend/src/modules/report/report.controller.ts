@@ -10,16 +10,19 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { ReportService } from './report.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { Response } from 'express';
 
 @ApiTags('reports')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller()
 export class ReportController {
   constructor(private reportService: ReportService) {}
 
   @Get('api/reports/jobs/:id')
+  @Roles('MEMBER')
   @ApiOperation({ summary: 'ジョブPDFレポート生成' })
   async generateJobReport(
     @Param('id') id: string,
@@ -38,6 +41,7 @@ export class ReportController {
   }
 
   @Get('api/reports/monthly')
+  @Roles('MEMBER')
   @ApiOperation({ summary: '月次PDFレポート生成' })
   @ApiQuery({ name: 'month', required: true, type: String, example: '2026-02' })
   async generateMonthlyReport(

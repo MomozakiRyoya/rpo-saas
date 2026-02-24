@@ -2,16 +2,19 @@ import { Controller, Get, Query, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuditService } from './audit.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @ApiTags('audit-logs')
 @Controller('api/audit-logs')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class AuditController {
   constructor(private auditService: AuditService) {}
 
   @Get()
-  @ApiOperation({ summary: '監査ログ取得' })
+  @Roles('MANAGER')
+  @ApiOperation({ summary: '監査ログ取得（MANAGER以上）' })
   @ApiQuery({ name: 'userId', required: false })
   @ApiQuery({ name: 'action', required: false })
   @ApiQuery({ name: 'resource', required: false })

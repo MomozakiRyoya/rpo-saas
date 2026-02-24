@@ -14,21 +14,25 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { ScoreCardService } from "./scorecard.service";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../../common/guards/roles.guard";
+import { Roles } from "../../common/decorators/roles.decorator";
 
 @ApiTags("scorecards")
 @Controller()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class ScoreCardController {
   constructor(private scoreCardService: ScoreCardService) {}
 
   @Get("api/scorecards")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "スコアカード一覧取得" })
   async findAll(@Request() req) {
     return this.scoreCardService.findAll(req.user.tenantId);
   }
 
   @Post("api/scorecards")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "スコアカード作成" })
   async create(
     @Body() body: { name: string; jobId?: string; criteria: any[] },
@@ -38,12 +42,14 @@ export class ScoreCardController {
   }
 
   @Get("api/scorecards/:id")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "スコアカード詳細取得" })
   async findOne(@Param("id") id: string, @Request() req) {
     return this.scoreCardService.findOne(id, req.user.tenantId);
   }
 
   @Patch("api/scorecards/:id")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "スコアカード更新" })
   async update(
     @Param("id") id: string,
@@ -54,6 +60,7 @@ export class ScoreCardController {
   }
 
   @Delete("api/scorecards/:id")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "スコアカード削除" })
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param("id") id: string, @Request() req) {
@@ -61,6 +68,7 @@ export class ScoreCardController {
   }
 
   @Post("api/scorecards/:id/score")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "スコア追加・更新" })
   async addScore(
     @Param("id") id: string,
@@ -83,6 +91,7 @@ export class ScoreCardController {
   }
 
   @Get("api/candidates/:candidateId/scores")
+  @Roles('MEMBER')
   @ApiOperation({ summary: "候補者のスコア集計取得" })
   async getCandidateScores(
     @Param("candidateId") candidateId: string,

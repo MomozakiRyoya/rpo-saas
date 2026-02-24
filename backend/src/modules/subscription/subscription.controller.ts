@@ -14,6 +14,8 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SubscriptionService } from './subscription.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { Request as ExpressRequest } from 'express';
 
 // NOTE: Stripe webhookのraw bodyを受け取るには、main.tsで以下の設定が必要です:
@@ -32,17 +34,19 @@ export class SubscriptionController {
   }
 
   @Get('api/subscription/current')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MANAGER')
   @ApiBearerAuth()
-  @ApiOperation({ summary: '現在のプラン取得' })
+  @ApiOperation({ summary: '現在のプラン取得（MANAGER以上）' })
   async getCurrentPlan(@Request() req) {
     return this.subscriptionService.getCurrentPlan(req.user.tenantId);
   }
 
   @Post('api/subscription/checkout')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MANAGER')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Stripe チェックアウトセッション作成' })
+  @ApiOperation({ summary: 'Stripe チェックアウトセッション作成（MANAGER以上）' })
   async createCheckoutSession(
     @Body() body: { planId: string; successUrl: string; cancelUrl: string },
     @Request() req,
@@ -56,9 +60,10 @@ export class SubscriptionController {
   }
 
   @Post('api/subscription/portal')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MANAGER')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Stripe カスタマーポータルセッション作成' })
+  @ApiOperation({ summary: 'Stripe カスタマーポータルセッション作成（MANAGER以上）' })
   async createPortalSession(@Body() body: { returnUrl: string }, @Request() req) {
     return this.subscriptionService.createPortalSession(req.user.tenantId, body.returnUrl);
   }

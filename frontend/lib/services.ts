@@ -1,5 +1,6 @@
 import api from "./api";
 import {
+  User,
   Customer,
   Job,
   Approval,
@@ -612,6 +613,42 @@ export const reportService = {
   },
 };
 
+// ユーザー管理（MANAGER+）
+export const userManagementService = {
+  async getAll(): Promise<User[]> {
+    const response = await api.get("/api/users");
+    return response.data;
+  },
+  async invite(data: {
+    email: string;
+    name: string;
+    password: string;
+    role: "MANAGER" | "MEMBER";
+  }): Promise<User> {
+    const response = await api.post("/api/users/invite", data);
+    return response.data;
+  },
+  async updateRole(id: string, role: "MANAGER" | "MEMBER"): Promise<User> {
+    const response = await api.patch(`/api/users/${id}/role`, { role });
+    return response.data;
+  },
+  async delete(id: string): Promise<void> {
+    await api.delete(`/api/users/${id}`);
+  },
+};
+
+// 管理者専用（ADMIN）
+export const adminService = {
+  async getAllTenants(): Promise<any[]> {
+    const response = await api.get("/api/tenants");
+    return response.data?.data || response.data;
+  },
+  async createTenant(data: { name: string; slug: string }): Promise<any> {
+    const response = await api.post("/api/tenants", data);
+    return response.data;
+  },
+};
+
 // 分析
 export const analyticsService = {
   async getDailyMetrics(filters?: {
@@ -633,12 +670,12 @@ export const analyticsService = {
 // ポータル（顧客向け）
 export const portalService = {
   async getMe() {
-    const response = await api.get('/api/portal/me');
+    const response = await api.get("/api/portal/me");
     return response.data;
   },
 
   async getJobs(params?: { status?: string }) {
-    const response = await api.get('/api/portal/jobs', { params });
+    const response = await api.get("/api/portal/jobs", { params });
     return response.data;
   },
 
@@ -648,7 +685,7 @@ export const portalService = {
   },
 
   async getApprovals() {
-    const response = await api.get('/api/portal/approvals');
+    const response = await api.get("/api/portal/approvals");
     return response.data;
   },
 
@@ -658,12 +695,14 @@ export const portalService = {
   },
 
   async reject(id: string, comment?: string) {
-    const response = await api.post(`/api/portal/approvals/${id}/reject`, { comment });
+    const response = await api.post(`/api/portal/approvals/${id}/reject`, {
+      comment,
+    });
     return response.data;
   },
 
   async getAnalytics() {
-    const response = await api.get('/api/portal/analytics');
+    const response = await api.get("/api/portal/analytics");
     return response.data;
   },
 };

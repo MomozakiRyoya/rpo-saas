@@ -13,16 +13,19 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { CandidateService } from './candidate.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { ApplicationStage } from '@prisma/client';
 
 @ApiTags('candidates')
 @Controller('api/candidates')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class CandidateController {
   constructor(private candidateService: CandidateService) {}
 
   @Get()
+  @Roles('MEMBER')
   @ApiOperation({ summary: '候補者一覧取得' })
   @ApiQuery({ name: 'q', required: false, type: String })
   @ApiQuery({ name: 'stage', required: false, enum: ApplicationStage })
@@ -48,6 +51,7 @@ export class CandidateController {
   }
 
   @Post()
+  @Roles('MEMBER')
   @ApiOperation({ summary: '候補者作成' })
   async create(
     @Body()
@@ -66,18 +70,21 @@ export class CandidateController {
 
   @Get('applications/:id/stage')
   // ルート衝突防止のため :id エンドポイントより先に定義
+  @Roles('MEMBER')
   @ApiOperation({ summary: 'ダミー - 以下のPATCHを使用' })
   async noop() {
     return {};
   }
 
   @Get(':id')
+  @Roles('MEMBER')
   @ApiOperation({ summary: '候補者詳細取得' })
   async findOne(@Param('id') id: string, @Request() req) {
     return this.candidateService.findOne(id, req.user.tenantId);
   }
 
   @Patch(':id')
+  @Roles('MEMBER')
   @ApiOperation({ summary: '候補者更新' })
   async update(
     @Param('id') id: string,
@@ -98,18 +105,21 @@ export class CandidateController {
   }
 
   @Delete(':id')
+  @Roles('MEMBER')
   @ApiOperation({ summary: '候補者削除' })
   async delete(@Param('id') id: string, @Request() req) {
     return this.candidateService.delete(id, req.user.tenantId);
   }
 
   @Get(':id/applications')
+  @Roles('MEMBER')
   @ApiOperation({ summary: '候補者の応募一覧取得' })
   async getApplications(@Param('id') id: string, @Request() req) {
     return this.candidateService.getApplications(id, req.user.tenantId);
   }
 
   @Post(':id/link-job')
+  @Roles('MEMBER')
   @ApiOperation({ summary: '候補者を求人に紐付け' })
   async linkToJob(
     @Param('id') id: string,
@@ -124,6 +134,7 @@ export class CandidateController {
   }
 
   @Patch('applications/:id/stage')
+  @Roles('MEMBER')
   @ApiOperation({ summary: '応募ステージ更新' })
   async updateStage(
     @Param('id') id: string,

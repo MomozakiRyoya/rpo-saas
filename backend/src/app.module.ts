@@ -28,6 +28,7 @@ import { ScoreCardModule } from "./modules/scorecard/scorecard.module";
 import { SubscriptionModule } from "./modules/subscription/subscription.module";
 import { MatchingModule } from "./modules/matching/matching.module";
 import { ReportModule } from "./modules/report/report.module";
+import { UserModule } from "./modules/user/user.module";
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ReportModule } from "./modules/report/report.module";
     QueueModule,
     AuthModule,
     TenantModule,
+    UserModule,
     CustomerModule,
     JobModule,
     GenerationModule,

@@ -1,16 +1,16 @@
-import api from './api';
-import { AuthResponse, User } from '@/types';
+import api from "./api";
+import { AuthResponse, User } from "@/types";
 
 export const authService = {
   async login(email: string, password: string): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/api/auth/login', {
+    const response = await api.post<AuthResponse>("/api/auth/login", {
       email,
       password,
     });
 
     // トークンとユーザー情報を保存
-    localStorage.setItem('token', response.data.accessToken);
-    localStorage.setItem('user', JSON.stringify(response.data.user));
+    localStorage.setItem("token", response.data.accessToken);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
 
     return response.data;
   },
@@ -21,28 +21,28 @@ export const authService = {
     password: string;
     tenantSlug: string;
     tenantName?: string;
-    role?: 'ADMIN' | 'MANAGER' | 'MEMBER';
+    role?: "ADMIN" | "MANAGER" | "MEMBER";
   }): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/api/auth/register', data);
+    const response = await api.post<AuthResponse>("/api/auth/register", data);
 
-    localStorage.setItem('token', response.data.accessToken);
-    localStorage.setItem('user', JSON.stringify(response.data.user));
+    localStorage.setItem("token", response.data.accessToken);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
 
     return response.data;
   },
 
   async getMe(): Promise<User> {
-    const response = await api.get<User>('/api/auth/me');
+    const response = await api.get<User>("/api/auth/me");
     return response.data;
   },
 
   logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   },
 
   getCurrentUser(): User | null {
-    const userStr = localStorage.getItem('user');
+    const userStr = localStorage.getItem("user");
     if (!userStr) return null;
     try {
       return JSON.parse(userStr);
@@ -52,6 +52,33 @@ export const authService = {
   },
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem("token");
+  },
+
+  // ロールヘルパー
+  isAdmin(): boolean {
+    return this.getCurrentUser()?.role === "ADMIN";
+  },
+
+  isManager(): boolean {
+    const role = this.getCurrentUser()?.role;
+    return role === "ADMIN" || role === "MANAGER";
+  },
+
+  isMember(): boolean {
+    const role = this.getCurrentUser()?.role;
+    return role === "ADMIN" || role === "MANAGER" || role === "MEMBER";
+  },
+
+  canApprove(): boolean {
+    return this.isManager();
+  },
+
+  canManageUsers(): boolean {
+    return this.isManager();
+  },
+
+  canManageSettings(): boolean {
+    return this.isManager();
   },
 };

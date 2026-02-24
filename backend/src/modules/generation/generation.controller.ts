@@ -2,6 +2,8 @@ import { Controller, Post, Get, Body, UseGuards, Request } from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { GenerationService } from './generation.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @ApiTags('generation')
 @Controller('api/generation')
@@ -19,7 +21,8 @@ export class GenerationController {
   }
 
   @Post('text')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MEMBER')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'テキスト生成実行' })
   async generateText(
@@ -30,7 +33,8 @@ export class GenerationController {
   }
 
   @Post('image')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MEMBER')
   @ApiBearerAuth()
   @ApiOperation({ summary: '画像生成実行' })
   async generateImage(

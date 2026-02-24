@@ -19,15 +19,18 @@ import {
 import { CustomerService } from "./customer.service";
 import { CreateCustomerDto, UpdateCustomerDto } from "./dto/customer.dto";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../../common/guards/roles.guard";
+import { Roles } from "../../common/decorators/roles.decorator";
 
 @ApiTags("customers")
 @Controller("api/customers")
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class CustomerController {
   constructor(private customerService: CustomerService) {}
 
   @Get()
+  @Roles('MANAGER')
   @ApiOperation({ summary: "顧客一覧取得" })
   @ApiQuery({ name: "page", required: false, type: Number })
   @ApiQuery({ name: "limit", required: false, type: Number })
@@ -44,18 +47,21 @@ export class CustomerController {
   }
 
   @Get(":id")
+  @Roles('MANAGER')
   @ApiOperation({ summary: "顧客詳細取得" })
   async findOne(@Param("id") id: string, @Request() req) {
     return this.customerService.findOne(id, req.user.tenantId);
   }
 
   @Post()
+  @Roles('MANAGER')
   @ApiOperation({ summary: "顧客作成" })
   async create(@Body() createCustomerDto: CreateCustomerDto, @Request() req) {
     return this.customerService.create(req.user.tenantId, createCustomerDto);
   }
 
   @Patch(":id")
+  @Roles('MANAGER')
   @ApiOperation({ summary: "顧客更新" })
   async update(
     @Param("id") id: string,
@@ -70,18 +76,21 @@ export class CustomerController {
   }
 
   @Delete(":id")
+  @Roles('MANAGER')
   @ApiOperation({ summary: "顧客削除" })
   async delete(@Param("id") id: string, @Request() req) {
     return this.customerService.delete(id, req.user.tenantId);
   }
 
   @Get(":id/portal-users")
+  @Roles('MANAGER')
   @ApiOperation({ summary: "ポータルユーザー一覧取得" })
   async getPortalUsers(@Param("id") id: string, @Request() req) {
     return this.customerService.getPortalUsers(id, req.user.tenantId);
   }
 
   @Post(":id/portal-users")
+  @Roles('MANAGER')
   @ApiOperation({ summary: "ポータルユーザー作成" })
   async createPortalUser(
     @Param("id") id: string,
