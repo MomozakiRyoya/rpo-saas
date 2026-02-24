@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { LlmService } from '../llm/llm.service';
-import { QueueService } from '../queue/queue.service';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import { LlmService } from "../llm/llm.service";
+import { QueueService } from "../queue/queue.service";
 
 @Injectable()
 export class InquiryService {
@@ -17,7 +17,7 @@ export class InquiryService {
       where: { tenantId },
       select: { id: true },
     });
-    const customerIds = customers.map(c => c.id);
+    const customerIds = customers.map((c) => c.id);
 
     return this.prisma.inquiry.findMany({
       where: {
@@ -31,7 +31,7 @@ export class InquiryService {
         },
         responses: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -44,11 +44,17 @@ export class InquiryService {
           customer: { tenantId },
         },
       });
-      if (!job) throw new Error('Job not found');
+      if (!job) throw new Error("Job not found");
     }
 
     return this.prisma.inquiry.create({
-      data,
+      data: {
+        content: data.content,
+        jobId: data.jobId || null,
+        applicantName: data.applicantName || null,
+        applicantEmail: data.applicantEmail || null,
+        category: data.category || null,
+      },
     });
   }
 
@@ -67,7 +73,7 @@ export class InquiryService {
       },
     });
 
-    if (!inquiry) throw new Error('Inquiry not found');
+    if (!inquiry) throw new Error("Inquiry not found");
 
     // Claude APIを使用して返信案生成
     const generatedResponse = await this.llmService.generateInquiryResponse({
@@ -80,13 +86,13 @@ export class InquiryService {
       data: {
         inquiryId,
         content: generatedResponse,
-        generatedBy: 'ai',
+        generatedBy: "ai",
       },
     });
 
     await this.prisma.inquiry.update({
       where: { id: inquiryId },
-      data: { status: 'DRAFT_READY' },
+      data: { status: "DRAFT_READY" },
     });
 
     return { responseId: response.id, content: response.content };
@@ -107,22 +113,22 @@ export class InquiryService {
       },
     });
 
-    if (!inquiry) throw new Error('Inquiry not found');
+    if (!inquiry) throw new Error("Inquiry not found");
 
     const response = await this.prisma.inquiryResponse.findUnique({
       where: { id: responseId },
     });
 
-    if (!response) throw new Error('Response not found');
+    if (!response) throw new Error("Response not found");
 
     // メール送信ジョブをキューに追加
     await this.queueService.addEmailJob({
-      to: inquiry.applicantEmail || 'applicant@example.com',
+      to: inquiry.applicantEmail || "applicant@example.com",
       subject: inquiry.job?.title
         ? `【${inquiry.job.title}】お問い合わせへの回答`
-        : 'お問い合わせへの回答',
+        : "お問い合わせへの回答",
       body: response.content,
-      template: 'inquiry-response',
+      template: "inquiry-response",
       data: {
         applicantName: inquiry.applicantName,
         jobTitle: inquiry.job?.title,
@@ -141,9 +147,9 @@ export class InquiryService {
     // 問い合わせステータスを更新
     await this.prisma.inquiry.update({
       where: { id: inquiryId },
-      data: { status: 'SENT' },
+      data: { status: "SENT" },
     });
 
-    return { message: 'Response email queued for sending' };
+    return { message: "Response email queued for sending" };
   }
 }

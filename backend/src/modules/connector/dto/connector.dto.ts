@@ -1,4 +1,4 @@
-import { IsString, IsObject, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, IsObject, IsBoolean, IsOptional } from "class-validator";
 
 export class CreateConnectorDto {
   @IsString()
@@ -9,6 +9,10 @@ export class CreateConnectorDto {
 
   @IsObject()
   config: Record<string, any>; // API認証情報など
+
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
 }
 
 export class UpdateConnectorDto {

@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { QueueService } from '../queue/queue.service';
-import { ConnectorFactory } from './connectors/connector.factory';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+import { QueueService } from "../queue/queue.service";
+import { ConnectorFactory } from "./connectors/connector.factory";
 
 @Injectable()
 export class ConnectorService {
@@ -10,10 +10,11 @@ export class ConnectorService {
     private queueService: QueueService,
   ) {}
 
-  // コネクタ一覧（管理画面用：全て表示）
+  // コネクタ一覧（有効なもののみ）
   async findAll() {
     const connectors = await this.prisma.connector.findMany({
-      orderBy: { createdAt: 'desc' },
+      where: { isActive: true },
+      orderBy: { createdAt: "desc" },
     });
     return { data: connectors };
   }
@@ -26,13 +27,18 @@ export class ConnectorService {
   }
 
   // コネクタ作成
-  async create(data: { name: string; type: string; config: any }) {
+  async create(data: {
+    name: string;
+    type: string;
+    config: any;
+    isActive?: boolean;
+  }) {
     return this.prisma.connector.create({
       data: {
         name: data.name,
         type: data.type,
         config: data.config,
-        isActive: true,
+        isActive: data.isActive ?? true,
       },
     });
   }
@@ -63,7 +69,7 @@ export class ConnectorService {
     });
 
     if (!connector) {
-      throw new Error('Connector not found');
+      throw new Error("Connector not found");
     }
 
     try {
@@ -76,7 +82,7 @@ export class ConnectorService {
 
       return {
         success: result,
-        message: result ? '接続成功' : '接続失敗',
+        message: result ? "接続成功" : "接続失敗",
       };
     } catch (error) {
       return {
@@ -87,7 +93,11 @@ export class ConnectorService {
   }
 
   // 掲載作成・実行（BullMQ使用）
-  async createPublication(jobId: string, connectorId: string, tenantId: string) {
+  async createPublication(
+    jobId: string,
+    connectorId: string,
+    tenantId: string,
+  ) {
     const job = await this.prisma.job.findFirst({
       where: {
         id: jobId,
@@ -95,13 +105,13 @@ export class ConnectorService {
       },
     });
 
-    if (!job) throw new Error('Job not found');
+    if (!job) throw new Error("Job not found");
 
     const publication = await this.prisma.publication.create({
       data: {
         jobId,
         connectorId,
-        status: 'PENDING',
+        status: "PENDING",
       },
     });
 
@@ -115,7 +125,7 @@ export class ConnectorService {
 
     return {
       publicationId: publication.id,
-      status: 'PENDING',
+      status: "PENDING",
       queueJobId: queueJob.jobId,
       queueName: queueJob.queueName,
     };
@@ -132,12 +142,12 @@ export class ConnectorService {
       },
     });
 
-    if (!publication) throw new Error('Publication not found');
+    if (!publication) throw new Error("Publication not found");
 
     await this.prisma.publication.update({
       where: { id: publicationId },
       data: {
-        status: 'STOPPED',
+        status: "STOPPED",
         stoppedAt: new Date(),
       },
     });
@@ -145,11 +155,11 @@ export class ConnectorService {
     await this.prisma.publicationLog.create({
       data: {
         publicationId,
-        action: 'stop',
-        status: 'success',
+        action: "stop",
+        status: "success",
       },
     });
 
-    return { message: 'Publication stopped successfully' };
+    return { message: "Publication stopped successfully" };
   }
 }
