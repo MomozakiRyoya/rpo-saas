@@ -17,7 +17,7 @@ import { PortalService } from "./portal.service";
 @ApiTags("portal")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("portal")
+@Controller("api/portal")
 export class PortalController {
   constructor(private readonly portalService: PortalService) {}
 
