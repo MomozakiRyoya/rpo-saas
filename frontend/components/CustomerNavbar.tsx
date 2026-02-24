@@ -148,7 +148,10 @@ export default function CustomerNavbar() {
       <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
         {NAV_SECTIONS.map((section) => (
           <div key={section.label}>
-            <p className="px-3 mb-1 text-xs font-semibold text-white uppercase tracking-widest opacity-50">
+            <p
+              className="px-3 mb-1 text-xs font-semibold uppercase tracking-widest"
+              style={{ color: "rgba(255,255,255,0.5)" }}
+            >
               {section.label}
             </p>
             <ul className="space-y-0.5">
@@ -160,15 +163,16 @@ export default function CustomerNavbar() {
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
                       className={`flex items-center space-x-2.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150 cursor-pointer ${
-                        active
-                          ? "bg-white/20 text-white"
-                          : "text-white hover:bg-white/10 opacity-80 hover:opacity-100"
+                        active ? "bg-white/20" : "hover:bg-white/10"
                       }`}
+                      style={{
+                        color: active ? "#ffffff" : "rgba(255,255,255,0.85)",
+                      }}
                     >
                       <span
-                        className={
-                          active ? "text-white" : "text-white opacity-70"
-                        }
+                        style={{
+                          color: active ? "#ffffff" : "rgba(255,255,255,0.7)",
+                        }}
                       >
                         {item.icon}
                       </span>
@@ -192,14 +196,18 @@ export default function CustomerNavbar() {
             <p className="text-white text-sm font-semibold truncate leading-tight">
               {user?.name}
             </p>
-            <p className="text-white text-xs truncate opacity-60">
+            <p
+              className="text-xs truncate"
+              style={{ color: "rgba(255,255,255,0.6)" }}
+            >
               採用企業担当者
             </p>
           </div>
         </div>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center space-x-2 px-3 py-1.5 rounded-md text-white hover:bg-white/10 text-sm transition-all duration-150 cursor-pointer opacity-80 hover:opacity-100"
+          className="w-full flex items-center space-x-2 px-3 py-1.5 rounded-md hover:bg-white/10 text-sm transition-all duration-150 cursor-pointer"
+          style={{ color: "rgba(255,255,255,0.85)" }}
         >
           <svg
             className="w-4 h-4"
