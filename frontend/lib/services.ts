@@ -280,8 +280,13 @@ export const scheduleService = {
 // 候補者管理
 export const candidateService = {
   async getAll(): Promise<Candidate[]> {
-    const res = await api.get<Candidate[]>("/api/candidates");
-    return res.data;
+    const res = await api.get<
+      { data: Candidate[]; meta?: unknown } | Candidate[]
+    >("/api/candidates");
+    const payload = res.data;
+    return Array.isArray(payload)
+      ? payload
+      : ((payload as { data: Candidate[] }).data ?? []);
   },
 
   async getOne(id: string): Promise<Candidate> {
