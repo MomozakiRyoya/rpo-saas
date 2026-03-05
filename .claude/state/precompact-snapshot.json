@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2026-02-24T18:28:02.856Z",
+  "sessionId": "",
+  "wipTasks": [],
+  "recentEdits": [
+    "backend/.claude/sessions/.last_inbox_check",
+    "backend/.claude/sessions/broadcast.md",
+    "backend/.claude/state/test-recommendation.json",
+    "backend/package-lock.json",
+    "backend/package.json",
+    "backend/prisma/schema.prisma",
+    "backend/src/app.module.ts",
+    "backend/src/modules/analytics/analytics.controller.ts",
+    "backend/src/modules/analytics/analytics.service.ts",
+    "backend/src/modules/approval/approval.controller.ts",
+    "backend/src/modules/audit/audit.controller.ts",
+    "backend/src/modules/candidate/candidate.controller.ts",
+    "backend/src/modules/candidate/candidate.module.ts",
+    "backend/src/modules/candidate/candidate.service.ts",
+    "backend/src/modules/comment/comment.controller.ts",
+    "backend/src/modules/comment/comment.module.ts",
+    "backend/src/modules/comment/comment.service.ts",
+    "backend/src/modules/connector/connector.controller.ts",
+    "backend/src/modules/connector/connectors/base.connector.ts",
+    "backend/src/modules/connector/connectors/connector.factory.ts"
+  ],
+  "metrics": null
+}

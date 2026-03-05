@@ -8,12 +8,16 @@ import {
   Query,
   UseGuards,
   Request,
+  UseInterceptors,
+  UploadedFile,
 } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import {
   ApiTags,
   ApiOperation,
   ApiBearerAuth,
   ApiQuery,
+  ApiConsumes,
 } from "@nestjs/swagger";
 import { ResumeService } from "./resume.service";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
@@ -51,5 +55,27 @@ export class ResumeController {
     @Request() req,
   ) {
     return this.resumeService.update(id, body.content, req.user.tenantId);
+  }
+
+  @Post("upload")
+  @Roles("MEMBER")
+  @ApiOperation({ summary: "履歴書アップロード・AI修正" })
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(
+    FileInterceptor("file", {
+      limits: { fileSize: 10 * 1024 * 1024 },
+      storage: undefined,
+    }),
+  )
+  async uploadAndAnalyze(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: { candidateId: string },
+    @Request() req,
+  ) {
+    return this.resumeService.uploadAndAnalyze(
+      body.candidateId,
+      req.user.tenantId,
+      file,
+    );
   }
 }

@@ -193,6 +193,8 @@ export interface Resume {
   id: string;
   candidateId: string;
   content: string;
+  originalContent?: string;
+  uploadedFileName?: string;
   version: number;
   tenantId: string;
   createdAt: string;
@@ -358,9 +360,23 @@ export interface PortalJob {
   updatedAt?: string;
   customer?: { id: string; name: string };
   approvals?: Array<{ id: string; status: string; requestedAt: string }>;
-  publications?: Array<{ id: string; status: string; connector?: { name: string } }>;
-  textVersions?: Array<{ id: string; version: number; content: string; generatedBy?: string }>;
-  imageVersions?: Array<{ id: string; version: number; imageUrl: string; generatedBy?: string }>;
+  publications?: Array<{
+    id: string;
+    status: string;
+    connector?: { name: string };
+  }>;
+  textVersions?: Array<{
+    id: string;
+    version: number;
+    content: string;
+    generatedBy?: string;
+  }>;
+  imageVersions?: Array<{
+    id: string;
+    version: number;
+    imageUrl: string;
+    generatedBy?: string;
+  }>;
 }
 
 export interface PortalApproval {

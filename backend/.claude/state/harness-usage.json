@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-02-24T15:01:04.177Z",
+  "skills": {},
+  "commands": {},
+  "agents": {
+    "claude-code-harness:task-worker": {
+      "count": 3,
+      "lastUsed": "2026-02-24T15:01:04.169Z"
+    }
+  },
+  "hooks": {}
+}

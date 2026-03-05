@@ -325,6 +325,61 @@ ${inquiryContent}
   }
 
   /**
+   * 履歴書を解析・修正
+   */
+  async analyzeAndCorrectResume(originalText: string): Promise<string> {
+    if (!process.env.OPENAI_API_KEY) {
+      return this.generateMockResumeCorrection(originalText);
+    }
+
+    const systemPrompt = `あなたは優秀な採用コンサルタントです。応募者が提出した履歴書・職務経歴書を読み、以下の観点で改善・修正してください。
+
+改善の観点:
+- 誤字・脱字・文法の修正
+- 敬語・丁寧語の統一
+- 職歴・スキルの具体的な数値化（「〜に携わった」→「〜を担当し、XX%改善に貢献」など）
+- アピールポイントの強調と整理
+- 採用担当者が読みやすい構成への再整理
+- 不足している項目の補足提案（コメントとして）
+
+修正後の履歴書を日本語で出力してください。修正箇所には【修正】タグ、補足提案には【提案】タグを付けて明示してください。`;
+
+    const userPrompt = `以下の履歴書を改善してください。\n\n${originalText}`;
+
+    try {
+      const response = await this.openaiClient.chat.completions.create({
+        model: "gpt-4o",
+        max_tokens: 4000,
+        temperature: 0.5,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+      });
+
+      const content = response.choices[0]?.message?.content;
+      if (content) return content;
+      throw new Error("No content in response");
+    } catch (error) {
+      console.error("OpenAI analyzeResume error:", error);
+      return this.generateMockResumeCorrection(originalText);
+    }
+  }
+
+  private generateMockResumeCorrection(originalText: string): string {
+    return `【AI修正済み履歴書】（モック）
+
+${originalText.substring(0, 200)}...
+
+【修正】誤字・脱字を修正しました。
+【修正】職歴の記述を具体的な数値を用いて強化しました。
+【提案】スキルセクションにプログラミング言語・ツールの習熟度を追加することを推奨します。
+【提案】志望動機に応募先企業の特徴に合わせた記述を追加することを推奨します。
+
+※ OPENAI_API_KEY が未設定のためモックレスポンスを返しています。`;
+  }
+
+  /**
    * 画像を生成（Gemini API - Imagen 3）
    */
   async generateImage(params: {

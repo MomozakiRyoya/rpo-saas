@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-02-24T18:28:02.713Z",
+  "skills": {},
+  "commands": {
+    "portal/dashboard": {
+      "count": 1,
+      "lastUsed": "2026-02-24T11:15:23.988Z"
+    }
+  },
+  "agents": {
+    "Bash": {
+      "count": 1,
+      "lastUsed": "2026-02-24T13:24:08.075Z"
+    },
+    "Explore": {
+      "count": 2,
+      "lastUsed": "2026-02-24T18:10:44.723Z"
+    },
+    "claude-code-harness:task-worker": {
+      "count": 2,
+      "lastUsed": "2026-02-24T18:28:02.712Z"
+    }
+  },
+  "hooks": {}
+}

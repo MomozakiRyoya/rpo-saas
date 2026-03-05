@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-02-24T10:39:04Z",
-  "changed_file": "prisma/seed.ts",
+  "timestamp": "2026-03-05T10:32:32Z",
+  "changed_file": "/Users/momozaki/claude-dev/rpo-saas/frontend/app/dashboard/candidates/[id]/ResumeTab.tsx",
   "test_command": "npm test",
   "related_test": "",
   "recommendation": "テストの実行を推奨します"

@@ -1,4 +1,11 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const pdfParse = require("pdf-parse");
+import * as mammoth from "mammoth";
 import { PrismaService } from "../../prisma/prisma.service";
 import { LlmService } from "../llm/llm.service";
 
@@ -94,5 +101,63 @@ ${candidate.notes ? `【備考】\n${candidate.notes}` : ""}
     });
     if (!resume) throw new NotFoundException("Resume not found");
     return this.prisma.resume.update({ where: { id }, data: { content } });
+  }
+
+  async uploadAndAnalyze(
+    candidateId: string,
+    tenantId: string,
+    file: Express.Multer.File,
+  ) {
+    const candidate = await this.prisma.candidate.findFirst({
+      where: { id: candidateId, tenantId },
+    });
+    if (!candidate) throw new NotFoundException("Candidate not found");
+
+    const mime = file.mimetype;
+    const filename = file.originalname;
+    let extractedText: string;
+
+    if (mime === "application/pdf") {
+      const result = await pdfParse(file.buffer);
+      extractedText = result.text;
+    } else if (
+      mime ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      mime === "application/msword"
+    ) {
+      const result = await mammoth.extractRawText({ buffer: file.buffer });
+      extractedText = result.value;
+    } else if (mime === "text/plain") {
+      extractedText = file.buffer.toString("utf-8");
+    } else {
+      throw new BadRequestException(
+        "対応しているファイル形式はPDF、Word（.docx）、テキストファイルのみです",
+      );
+    }
+
+    if (!extractedText || extractedText.trim().length < 10) {
+      throw new BadRequestException(
+        "ファイルからテキストを抽出できませんでした",
+      );
+    }
+
+    const correctedContent =
+      await this.llmService.analyzeAndCorrectResume(extractedText);
+
+    const lastResume = await this.prisma.resume.findFirst({
+      where: { candidateId },
+      orderBy: { version: "desc" },
+    });
+
+    return this.prisma.resume.create({
+      data: {
+        candidateId,
+        tenantId,
+        content: correctedContent,
+        originalContent: extractedText,
+        uploadedFileName: filename,
+        version: (lastResume?.version || 0) + 1,
+      },
+    });
   }
 }

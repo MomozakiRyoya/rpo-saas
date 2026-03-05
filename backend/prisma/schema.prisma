@@ -438,14 +438,16 @@ model InterviewLog {
 // ==================== 職務経歴書 ====================
 
 model Resume {
-  id          String    @id @default(uuid())
-  candidateId String
-  candidate   Candidate @relation(fields: [candidateId], references: [id])
-  content     String    @db.Text
-  version     Int       @default(1)
-  tenantId    String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id               String    @id @default(uuid())
+  candidateId      String
+  candidate        Candidate @relation(fields: [candidateId], references: [id])
+  content          String    @db.Text
+  originalContent  String?   @db.Text
+  uploadedFileName String?
+  version          Int       @default(1)
+  tenantId         String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   @@index([candidateId])
 }

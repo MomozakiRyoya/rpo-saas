@@ -364,6 +364,16 @@ export const resumeService = {
     const res = await api.patch<Resume>(`/api/resumes/${id}`, { content });
     return res.data;
   },
+
+  async upload(candidateId: string, file: File): Promise<Resume> {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("candidateId", candidateId);
+    const res = await api.post<Resume>("/api/resumes/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return res.data;
+  },
 };
 
 // 候補者管理（ATS）

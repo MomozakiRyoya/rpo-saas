@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-02-24T15:13:16.203Z",
+  "skills": {},
+  "commands": {},
+  "agents": {
+    "Explore": {
+      "count": 3,
+      "lastUsed": "2026-02-24T14:34:08.903Z"
+    },
+    "vercel-frontend-builder": {
+      "count": 1,
+      "lastUsed": "2026-02-24T14:44:54.543Z"
+    },
+    "stripe-backend-engineer": {
+      "count": 1,
+      "lastUsed": "2026-02-24T14:48:41.760Z"
+    },
+    "Bash": {
+      "count": 3,
+      "lastUsed": "2026-02-24T15:13:16.198Z"
+    }
+  },
+  "hooks": {}
+}

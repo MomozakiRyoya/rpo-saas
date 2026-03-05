@@ -1,0 +1,4 @@
+{"event":"task_completed","teammate":"5","task_id":"Sentry エラー監視設定","subject":"Backend: @sentry/nestjs インストール + instrument.ts作成 + main.ts更新。Frontend: @sentry/nextjs インストール + sentr","description":"","timestamp":"2026-02-24T14:03:41Z"}
+{"event":"task_completed","teammate":"3","task_id":"パスワードリセット実装","subject":"Backend: auth.service/controller/dto/module + email.service にパスワードリセット機能を追加。Frontend: forgot-passwor","description":"","timestamp":"2026-02-24T14:04:39Z"}
+{"event":"task_completed","teammate":"5","task_id":"Backend: RolesGuard + 全コントローラー権限適用 + UserModule","subject":"RolesGuard/Rolesデコレーター作成、全25コントローラーにロール制限追加、UserModule（メンバー招待・管理）実装","description":"","timestamp":"2026-02-24T18:18:55Z"}
+{"event":"task_completed","teammate":"6","task_id":"Frontend: ロール別UI・Navbar・ユーザー管理・管理者ページ","subject":"Navbar ロール別セクション、承認ページボタン制御、ユーザー管理ページ（/dashboard/users）、ADMINダッシュボード（/dashboard/admin）、registerページ修正","description":"","timestamp":"2026-02-24T18:32:22Z"}
